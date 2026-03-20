@@ -31,10 +31,14 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Rewrite root and other paths to /admin prefix
-    const url = request.nextUrl.clone();
-    url.pathname = `/admin${pathname === "/" ? "" : pathname}`;
-    return NextResponse.rewrite(url);
+    // Rewrite root to /admin, redirect anything else to /admin
+    if (pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.rewrite(url);
+    }
+    // Any other path on office domain that's not admin/auth/api → redirect to /admin
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   // Regular site: protect /chat

@@ -43,7 +43,9 @@ export default function AuthPage() {
           return;
         }
       }
-      router.push("/chat");
+      // Redirect to admin dashboard on office subdomain, otherwise to chat
+      const isOffice = window.location.hostname.startsWith("office.");
+      router.push(isOffice ? "/admin" : "/chat");
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
