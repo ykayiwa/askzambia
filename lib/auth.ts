@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import "pg"; // Force Next.js to bundle pg for better-auth's dynamic import
+// Force Next.js to bundle these for better-auth's dynamic imports
+import "pg";
+import "kysely";
 
 export const auth = betterAuth({
   database: {
