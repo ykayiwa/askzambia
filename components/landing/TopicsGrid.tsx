@@ -123,7 +123,7 @@ function TopicCard({ topic, onClick }: { topic: typeof TOPICS[number]; onClick: 
         inactiveZone={0.01}
         borderWidth={2}
       />
-      <div className="relative rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 transition-colors">
+      <div className="relative flex h-full flex-col rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 transition-colors">
         <div
           className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
           style={{ background: topic.iconBg, color: topic.iconColor }}
