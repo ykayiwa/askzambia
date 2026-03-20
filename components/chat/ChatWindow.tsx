@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { SuggestedQuestions } from "./SuggestedQuestions";
 import { SearchBar } from "./SearchBar";
+import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
 import type { ChatMessage } from "@/types/chat";
 
 interface ChatWindowProps {
@@ -38,12 +39,7 @@ export function ChatWindow({ messages, isLoading, onSend }: ChatWindowProps) {
             ))}
             {isLoading && (
               <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#d1e7dd]">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                </div>
+                <ZambiaFlag size={32} />
                 <div className="rounded-2xl rounded-tl-md border border-[#e0e8e0] bg-[#f8fdf8] px-4 py-3">
                   <div className="flex gap-1">
                     <span className="h-2 w-2 animate-bounce rounded-full bg-[#198754]/40 [animation-delay:0ms]" />

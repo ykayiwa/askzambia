@@ -1,5 +1,7 @@
 "use client";
 
+import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
+
 const SUGGESTIONS = [
   { text: "What are my rights under the Zambian constitution?", icon: "⚖️" },
   { text: "How do I register a business in Zambia?", icon: "🏢" },
@@ -16,12 +18,7 @@ interface SuggestedQuestionsProps {
 export function SuggestedQuestions({ onSelect }: SuggestedQuestionsProps) {
   return (
     <div className="flex flex-col items-center gap-6 px-4 py-12">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#d1e7dd]">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.3-4.3" />
-        </svg>
-      </div>
+      <ZambiaFlag size={56} />
       <div className="text-center">
         <h2 className="text-xl font-bold text-[#0f1f14]">Ask anything about Zambia</h2>
         <p className="mt-1 text-sm text-gray-500">Get instant, verified answers from official sources</p>
