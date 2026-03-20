@@ -24,7 +24,14 @@ function ShareMenu({ content, onClose }: { content: string; onClose: () => void 
   }, [onClose]);
 
   const snippet = content.length > 200 ? content.slice(0, 200) + "..." : content;
-  const url = typeof window !== "undefined" ? window.location.href : "https://askzambia.com";
+  // Build a clean share URL with dashes instead of %20
+  const rawUrl = typeof window !== "undefined" ? window.location.href : "https://askzambia.com";
+  const url = rawUrl.replace(/\?q=.*$/, (match) => {
+    const q = new URLSearchParams(match.slice(1)).get("q") || "";
+    const slug = q.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+    const id = Math.random().toString(36).slice(2, 7);
+    return `?q=${slug}-${id}`;
+  });
   const text = encodeURIComponent(`${snippet}\n\n— via AskZambia`);
   const encodedUrl = encodeURIComponent(url);
 
