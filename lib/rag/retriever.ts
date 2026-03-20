@@ -1,4 +1,4 @@
-import sql from "@/lib/db/client";
+import { getDb } from "@/lib/db/client";
 import { generateEmbedding } from "@/lib/rag/pipeline";
 import type { RetrievedChunk } from "@/types/sources";
 
@@ -10,6 +10,7 @@ export async function retrieveChunks(
   const embedding = await generateEmbedding(query);
   const vectorStr = `[${embedding.join(",")}]`;
 
+  const sql = getDb();
   const chunks = await sql<RetrievedChunk[]>`
     SELECT
       dc.id,

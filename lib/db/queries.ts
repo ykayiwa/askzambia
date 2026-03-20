@@ -1,7 +1,8 @@
-import sql from "@/lib/db/client";
+import { getDb } from "@/lib/db/client";
 import type { ChatSession, Message, Feedback } from "@/types/database";
 
 export async function createSession(title?: string): Promise<ChatSession> {
+  const sql = getDb();
   const [session] = await sql<ChatSession[]>`
     INSERT INTO chat_sessions (title)
     VALUES (${title ?? "New conversation"})
@@ -11,6 +12,7 @@ export async function createSession(title?: string): Promise<ChatSession> {
 }
 
 export async function getSessions(limit = 50): Promise<ChatSession[]> {
+  const sql = getDb();
   return sql<ChatSession[]>`
     SELECT * FROM chat_sessions
     ORDER BY created_at DESC
@@ -19,6 +21,7 @@ export async function getSessions(limit = 50): Promise<ChatSession[]> {
 }
 
 export async function getSessionMessages(sessionId: string): Promise<Message[]> {
+  const sql = getDb();
   return sql<Message[]>`
     SELECT * FROM messages
     WHERE session_id = ${sessionId}
@@ -32,6 +35,7 @@ export async function saveMessage(
   content: string,
   sources?: Array<{ title: string; url: string; snippet: string }>
 ): Promise<Message> {
+  const sql = getDb();
   const [message] = await sql<Message[]>`
     INSERT INTO messages (session_id, role, content, sources)
     VALUES (${sessionId}, ${role}, ${content}, ${sources ? sql.json(sources) : null})
@@ -44,6 +48,7 @@ export async function saveFeedback(
   messageId: string,
   rating: 1 | -1
 ): Promise<Feedback> {
+  const sql = getDb();
   const [feedback] = await sql<Feedback[]>`
     INSERT INTO feedback (message_id, rating)
     VALUES (${messageId}, ${rating})
@@ -56,6 +61,7 @@ export async function updateSessionTitle(
   sessionId: string,
   title: string
 ): Promise<void> {
+  const sql = getDb();
   await sql`
     UPDATE chat_sessions SET title = ${title}
     WHERE id = ${sessionId}
