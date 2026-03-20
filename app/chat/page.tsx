@@ -48,7 +48,9 @@ function ChatContent() {
         }
 
         const sourcesHeader = response.headers.get("X-Sources");
-        const sources = sourcesHeader ? JSON.parse(sourcesHeader) : [];
+        const sources = sourcesHeader
+          ? JSON.parse(decodeURIComponent(sourcesHeader))
+          : [];
 
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
