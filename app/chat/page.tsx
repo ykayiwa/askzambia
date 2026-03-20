@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ChatWindow } from "@/components/chat/ChatWindow";
 import type { ChatMessage } from "@/types/chat";
 import Link from "next/link";
+import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
 
 interface SessionItem {
   id: string;
@@ -104,7 +105,7 @@ function ChatContent() {
   useEffect(() => {
     const q = searchParams.get("q");
     if (q && messages.length === 0) {
-      sendMessage(q);
+      sendMessage(q.replace(/-/g, " "));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -163,12 +164,7 @@ function ChatContent() {
           {/* Sidebar header */}
           <div className="border-b border-[#e0e8e0] p-4">
             <Link href="/" className="mb-3 flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#198754]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-              </div>
+              <ZambiaFlag size={32} />
               <div className="leading-tight">
                 <span className="block text-base font-bold tracking-tight text-[#198754]">AskZambia</span>
                 <span className="block text-[9.5px] font-semibold uppercase tracking-wider text-gray-500">National AI Platform</span>

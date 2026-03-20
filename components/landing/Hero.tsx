@@ -17,7 +17,7 @@ export function Hero() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      router.push(`/chat?q=${query.trim().replace(/ /g, "+")}`);
+      router.push(`/chat?q=${query.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-")}`);
     }
   };
 
@@ -85,7 +85,7 @@ export function Hero() {
         {SUGGESTIONS.map((s) => (
           <button
             key={s.label}
-            onClick={() => router.push(`/chat?q=${s.query.replace(/ /g, "+")}`)}
+            onClick={() => router.push(`/chat?q=${s.query.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-")}`)}
             className="min-h-[36px] rounded-full border border-[#e2e8f0] bg-white px-4 py-[9px] text-[0.82rem] text-[#64748b] transition-all hover:-translate-y-px hover:border-[#198754] hover:bg-[#f0faf4] hover:text-[#198754]"
           >
             {s.label}
