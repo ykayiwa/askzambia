@@ -12,6 +12,11 @@ export const auth = betterAuth({
     db: new Kysely({ dialect }),
     type: "postgres",
   },
+  trustedOrigins: [
+    "https://askzambia.com",
+    "https://office.askzambia.com",
+    "http://localhost:3000",
+  ],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -19,7 +24,7 @@ export const auth = betterAuth({
   session: {
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 5, // 5 minutes
+      maxAge: 60 * 5,
     },
   },
   plugins: [nextCookies()],
