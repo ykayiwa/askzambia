@@ -161,7 +161,7 @@ export function TopicsGrid() {
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {TOPICS.map((topic) => (
-          <TopicCard key={topic.title} topic={topic} onClick={() => router.push(`/chat?q=${encodeURIComponent(topic.query)}`)} />
+          <TopicCard key={topic.title} topic={topic} onClick={() => router.push(`/chat?q=${topic.query.replace(/ /g, "+")}`)} />
         ))}
       </div>
     </section>
