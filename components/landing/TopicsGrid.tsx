@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { GlowEffect } from "@/components/ui/glow-effect";
 
 const TOPICS = [
   {
@@ -108,6 +110,39 @@ const TOPICS = [
   },
 ];
 
+function TopicCard({ topic, onClick }: { topic: typeof TOPICS[number]; onClick: () => void }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative rounded-2xl p-[2px] text-left transition-all hover:-translate-y-[3px]"
+    >
+      {hovered && (
+        <GlowEffect
+          colors={[topic.iconColor, '#198754', topic.iconColor, '#E8621C']}
+          mode="colorShift"
+          blur="soft"
+          duration={3}
+          className="rounded-2xl"
+        />
+      )}
+      <div className="relative rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 transition-colors group-hover:border-transparent">
+        <div
+          className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+          style={{ background: topic.iconBg, color: topic.iconColor }}
+        >
+          {topic.icon}
+        </div>
+        <h3 className="mb-[7px] text-base font-bold text-[#0f1f14]">{topic.title}</h3>
+        <p className="text-[0.85rem] leading-relaxed text-[#64748b]">{topic.description}</p>
+      </div>
+    </button>
+  );
+}
+
 export function TopicsGrid() {
   const router = useRouter();
 
@@ -126,20 +161,7 @@ export function TopicsGrid() {
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {TOPICS.map((topic) => (
-          <button
-            key={topic.title}
-            onClick={() => router.push(`/chat?q=${encodeURIComponent(topic.query)}`)}
-            className="group rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 text-left transition-all hover:-translate-y-[3px] hover:border-[#198754] hover:shadow-[0_8px_32px_rgba(25,135,84,0.1)]"
-          >
-            <div
-              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-              style={{ background: topic.iconBg, color: topic.iconColor }}
-            >
-              {topic.icon}
-            </div>
-            <h3 className="mb-[7px] text-base font-bold text-[#0f1f14]">{topic.title}</h3>
-            <p className="text-[0.85rem] leading-relaxed text-[#64748b]">{topic.description}</p>
-          </button>
+          <TopicCard key={topic.title} topic={topic} onClick={() => router.push(`/chat?q=${encodeURIComponent(topic.query)}`)} />
         ))}
       </div>
     </section>
