@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   {
@@ -83,6 +84,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -151,12 +153,15 @@ export default function AdminLayout({
               </div>
             </div>
           </div>
-          <a
-            href="/api/auth/sign-out"
-            className="mt-3 block rounded-md bg-white/5 px-3 py-1.5 text-center text-xs text-white/60 hover:bg-white/10 hover:text-white"
+          <button
+            onClick={async () => {
+              await authClient.signOut();
+              router.push("/auth");
+            }}
+            className="mt-3 block w-full rounded-md bg-white/5 px-3 py-1.5 text-center text-xs text-white/60 hover:bg-white/10 hover:text-white"
           >
             Sign Out
-          </a>
+          </button>
         </div>
       </aside>
 
