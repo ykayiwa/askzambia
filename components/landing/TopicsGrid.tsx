@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GlowEffect } from "@/components/ui/glow-effect";
+import { GlowingEffect } from "@/components/ui/glow-effect";
 
 const TOPICS = [
   {
@@ -111,25 +110,20 @@ const TOPICS = [
 ];
 
 function TopicCard({ topic, onClick }: { topic: typeof TOPICS[number]; onClick: () => void }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="group relative rounded-2xl p-[2px] text-left transition-all hover:-translate-y-[3px]"
+      className="group relative rounded-2xl text-left transition-all hover:-translate-y-[3px]"
     >
-      {hovered && (
-        <GlowEffect
-          colors={[topic.iconColor, '#198754', topic.iconColor, '#E8621C']}
-          mode="colorShift"
-          blur="soft"
-          duration={3}
-          className="rounded-2xl"
-        />
-      )}
-      <div className="relative rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 transition-colors group-hover:border-transparent">
+      <GlowingEffect
+        spread={40}
+        glow
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+        borderWidth={2}
+      />
+      <div className="relative rounded-2xl border-[1.5px] border-[#e2e8f0] bg-white p-7 transition-colors">
         <div
           className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
           style={{ background: topic.iconBg, color: topic.iconColor }}
