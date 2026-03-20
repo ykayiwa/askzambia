@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
       // For admin pages, check auth
       if (pathname.startsWith("/admin")) {
         const sessionCookie = request.cookies.get(
-          "better-auth.session_token"
+          "better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token"
         );
         if (!sessionCookie?.value) {
           return NextResponse.redirect(new URL("/auth", request.url));
@@ -43,7 +43,7 @@ export function middleware(request: NextRequest) {
 
   // Regular site: protect /chat
   if (request.nextUrl.pathname === "/chat") {
-    const sessionCookie = request.cookies.get("better-auth.session_token");
+    const sessionCookie = request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token");
     if (!sessionCookie?.value) {
       const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set(
