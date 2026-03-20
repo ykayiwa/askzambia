@@ -143,6 +143,12 @@ function TopicCard({ topic, onClick }: { topic: typeof TOPICS[number]; onClick: 
   );
 }
 
+function toSlug(text: string) {
+  const slug = text.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+  const id = Math.random().toString(36).slice(2, 7);
+  return `${slug}-${id}`;
+}
+
 export function TopicsGrid() {
   const router = useRouter();
 
@@ -161,7 +167,7 @@ export function TopicsGrid() {
       </div>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {TOPICS.map((topic) => (
-          <TopicCard key={topic.title} topic={topic} onClick={() => router.push(`/chat?q=${topic.query.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-")}`)} />
+          <TopicCard key={topic.title} topic={topic} onClick={() => router.push(`/chat?q=${toSlug(topic.query)}`)} />
         ))}
       </div>
     </section>

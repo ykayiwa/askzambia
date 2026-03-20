@@ -105,7 +105,9 @@ function ChatContent() {
   useEffect(() => {
     const q = searchParams.get("q");
     if (q && messages.length === 0) {
-      sendMessage(q.replace(/-/g, " "));
+      // Strip trailing unique ID (e.g. "best-places-in-zambia-a3x9k" → "best places in zambia")
+      const query = q.replace(/-[a-z0-9]{4,6}$/, "").replace(/-/g, " ");
+      sendMessage(query);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
