@@ -1,11 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ZambiaFlag } from "./ZambiaFlag";
+import { authClient } from "@/lib/auth-client";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    authClient.getSession().then((res) => {
+      if (res.data) setIsLoggedIn(true);
+    }).catch(() => {});
+  }, []);
 
   return (
     <>
@@ -20,12 +28,21 @@ export function Navbar() {
           <Link href="#topics" className="text-[0.9rem] font-medium text-[#64748b] transition-colors hover:text-[#198754]">Topics</Link>
           <Link href="#how" className="text-[0.9rem] font-medium text-[#64748b] transition-colors hover:text-[#198754]">How it works</Link>
           <Link href="#sources" className="text-[0.9rem] font-medium text-[#64748b] transition-colors hover:text-[#198754]">Sources</Link>
-          <Link
-            href="/chat"
-            className="inline-flex min-h-[44px] items-center rounded-[9px] bg-[#198754] px-[22px] py-[10px] text-[0.9rem] font-semibold text-white transition-all hover:-translate-y-px hover:bg-[#146c43]"
-          >
-            Open Chat →
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/chat"
+              className="inline-flex min-h-[44px] items-center rounded-[9px] bg-[#198754] px-[22px] py-[10px] text-[0.9rem] font-semibold text-white transition-all hover:-translate-y-px hover:bg-[#146c43]"
+            >
+              Open Chat →
+            </Link>
+          ) : (
+            <Link
+              href="/auth"
+              className="inline-flex min-h-[44px] items-center rounded-[9px] bg-[#198754] px-[22px] py-[10px] text-[0.9rem] font-semibold text-white transition-all hover:-translate-y-px hover:bg-[#146c43]"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -61,9 +78,15 @@ export function Navbar() {
           <Link href="#sources" onClick={() => setMobileOpen(false)} className="flex min-h-[44px] items-center rounded-lg px-3 text-base font-medium text-[#0f1f14] transition-colors hover:bg-[#f0faf4] hover:text-[#198754]">
             Sources
           </Link>
-          <Link href="/chat" onClick={() => setMobileOpen(false)} className="mt-2 flex min-h-[44px] items-center justify-center rounded-lg bg-[#198754] text-base font-semibold text-white transition-colors hover:bg-[#146c43]">
-            Open Chat →
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/chat" onClick={() => setMobileOpen(false)} className="mt-2 flex min-h-[44px] items-center justify-center rounded-lg bg-[#198754] text-base font-semibold text-white transition-colors hover:bg-[#146c43]">
+              Open Chat →
+            </Link>
+          ) : (
+            <Link href="/auth" onClick={() => setMobileOpen(false)} className="mt-2 flex min-h-[44px] items-center justify-center rounded-lg bg-[#198754] text-base font-semibold text-white transition-colors hover:bg-[#146c43]">
+              Sign In
+            </Link>
+          )}
         </div>
       )}
     </>

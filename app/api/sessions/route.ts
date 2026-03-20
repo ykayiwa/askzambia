@@ -1,9 +1,30 @@
-import { createSession, getSessions } from "@/lib/db/queries";
+import {
+  createSession,
+  getSessions,
+  getSessionMessages,
+} from "@/lib/db/queries";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { z } from "zod";
+
+async function getUser() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  return session?.user ?? null;
+}
 
 export async function GET() {
   try {
-    const sessions = await getSessions();
+    const user = await getUser();
+    if (!user) {
+      return Response.json(
+        { error: "Unauthorized", code: "UNAUTHORIZED" },
+        { status: 401 }
+      );
+    }
+
+    const sessions = await getSessions(user.id);
     return Response.json(sessions);
   } catch (error) {
     console.error("Sessions GET error:", error);
@@ -20,9 +41,17 @@ const CreateSessionSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const user = await getUser();
+    if (!user) {
+      return Response.json(
+        { error: "Unauthorized", code: "UNAUTHORIZED" },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { title } = CreateSessionSchema.parse(body);
-    const session = await createSession(title);
+    const session = await createSession(user.id, title);
     return Response.json(session);
   } catch (error) {
     if (error instanceof z.ZodError) {

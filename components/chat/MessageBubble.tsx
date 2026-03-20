@@ -8,7 +8,7 @@ import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
 interface MessageProps {
   role: "user" | "assistant";
   content: string;
-  sources?: Array<{ title: string; url: string | null; snippet: string }>;
+  sources?: Array<{ title: string; url: string | null; snippet?: string }>;
 }
 
 function ShareMenu({ content, onClose }: { content: string; onClose: () => void }) {

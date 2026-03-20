@@ -22,6 +22,7 @@ export interface DocumentChunk {
 
 export interface ChatSession {
   id: string;
+  user_id: string | null;
   title: string | null;
   created_at: string;
 }
@@ -45,5 +46,5 @@ export interface Feedback {
 export interface SourceReference {
   title: string;
   url: string;
-  snippet: string;
+  snippet?: string;
 }

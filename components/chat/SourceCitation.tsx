@@ -3,7 +3,7 @@
 interface Source {
   title: string;
   url: string | null;
-  snippet: string;
+  snippet?: string;
 }
 
 export function SourceCitation({ sources }: { sources: Source[] }) {
