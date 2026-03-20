@@ -10,9 +10,10 @@ export function middleware(request: NextRequest) {
   if (isAdminDomain) {
     const pathname = request.nextUrl.pathname;
 
-    // Don't rewrite API routes or static assets
+    // Don't rewrite auth, API routes, or static assets
     if (
       pathname.startsWith("/admin") ||
+      pathname.startsWith("/auth") ||
       pathname.startsWith("/api") ||
       pathname.startsWith("/_next") ||
       pathname === "/favicon.ico" ||
