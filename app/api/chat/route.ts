@@ -41,12 +41,13 @@ export async function POST(req: Request) {
 
     return result.toTextStreamResponse({
       headers: {
-        "X-Sources": JSON.stringify(
-          sources.map((s) => ({
-            title: s.source_name,
-            url: s.source_url,
-            snippet: s.content.slice(0, 200),
-          }))
+        "X-Sources": encodeURIComponent(
+          JSON.stringify(
+            sources.map((s) => ({
+              title: s.source_name,
+              url: s.source_url,
+            }))
+          )
         ),
       },
     });
