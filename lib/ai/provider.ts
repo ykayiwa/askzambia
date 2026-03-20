@@ -1,10 +1,22 @@
 import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 
+// Primary: DeepSeek direct API
 const deepseek = createOpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY!,
+  apiKey: process.env.DEEPSEEK_API_KEY ?? "",
   baseURL: "https://api.deepseek.com",
 });
 
-export const llm = deepseek(
-  process.env.LLM_MODEL ?? "deepseek-chat"
-);
+// Backup: OpenRouter (supports 290+ models)
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY ?? "",
+  headers: {
+    "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "https://askzambia.com",
+    "X-Title": "AskZambia",
+  },
+});
+
+// Use DeepSeek if key is set, otherwise fall back to OpenRouter
+export const llm = process.env.DEEPSEEK_API_KEY
+  ? deepseek(process.env.LLM_MODEL ?? "deepseek-chat")
+  : openrouter(process.env.LLM_MODEL ?? "deepseek/deepseek-chat-v3-0324");
