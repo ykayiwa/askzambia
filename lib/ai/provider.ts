@@ -18,5 +18,5 @@ const openrouter = createOpenRouter({
 
 // Use OpenRouter as primary, fall back to DeepSeek direct if no OpenRouter key
 export const llm = process.env.OPENROUTER_API_KEY
-  ? openrouter(process.env.LLM_MODEL ?? "deepseek/deepseek-chat-v3-0324")
+  ? openrouter(process.env.LLM_MODEL ?? "moonshotai/kimi-k2")
   : deepseek(process.env.LLM_MODEL ?? "deepseek-chat");
