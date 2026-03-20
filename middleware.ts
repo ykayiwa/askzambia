@@ -41,19 +41,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
-  // Regular site: protect /chat
-  if (request.nextUrl.pathname === "/chat") {
-    const sessionCookie = request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token");
-    if (!sessionCookie?.value) {
-      const loginUrl = new URL("/auth", request.url);
-      loginUrl.searchParams.set(
-        "redirect",
-        request.nextUrl.pathname + request.nextUrl.search
-      );
-      return NextResponse.redirect(loginUrl);
-    }
-  }
-
   return NextResponse.next();
 }
 

@@ -18,10 +18,7 @@ export async function GET() {
   try {
     const user = await getUser();
     if (!user) {
-      return Response.json(
-        { error: "Unauthorized", code: "UNAUTHORIZED" },
-        { status: 401 }
-      );
+      return Response.json([]);
     }
 
     const sessions = await getSessions(user.id);

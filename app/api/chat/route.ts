@@ -27,15 +27,10 @@ const RequestSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    // Auth is optional — chat works without login, sessions saved only for logged-in users
     const session = await auth.api.getSession({
       headers: await headers(),
-    });
-    if (!session?.user) {
-      return Response.json(
-        { error: "Unauthorized", code: "UNAUTHORIZED" },
-        { status: 401 }
-      );
-    }
+    }).catch(() => null);
 
     const body = await req.json();
     const { messages, sessionId } = RequestSchema.parse(body);
@@ -49,20 +44,20 @@ export async function POST(req: Request) {
       systemPrompt += `\n\nADDITIONAL GUIDANCE: ${TOPIC_PROMPTS[category]}`;
     }
 
-    // Create or reuse session
-    let currentSessionId = sessionId;
-    if (!currentSessionId) {
-      // Create new session with title from first message
-      const title =
-        lastMessage.length > 80
-          ? lastMessage.slice(0, 77) + "..."
-          : lastMessage;
-      const chatSession = await createSession(session.user.id, title);
-      currentSessionId = chatSession.id;
+    // Create or reuse session (only for authenticated users)
+    let currentSessionId = sessionId ?? "";
+    if (session?.user) {
+      if (!currentSessionId) {
+        const title =
+          lastMessage.length > 80
+            ? lastMessage.slice(0, 77) + "..."
+            : lastMessage;
+        const chatSession = await createSession(session.user.id, title);
+        currentSessionId = chatSession.id;
+      }
+      // Save user message
+      await saveMessage(currentSessionId, "user", lastMessage);
     }
-
-    // Save user message
-    await saveMessage(currentSessionId, "user", lastMessage);
 
     const result = streamText({
       model: llm,
@@ -71,22 +66,23 @@ export async function POST(req: Request) {
       maxOutputTokens: 1024,
       temperature: 0.1,
       onFinish: async ({ text }) => {
-        try {
-          // Save assistant message with sources
-          const sourcesData = sources
-            .filter((s) => s.source_url)
-            .map((s) => ({
-              title: s.source_name,
-              url: s.source_url as string,
-            }));
-          await saveMessage(
-            currentSessionId!,
-            "assistant",
-            text,
-            sourcesData.length > 0 ? sourcesData : undefined
-          );
-        } catch (err) {
-          console.error("Failed to save assistant message:", err);
+        if (session?.user && currentSessionId) {
+          try {
+            const sourcesData = sources
+              .filter((s) => s.source_url)
+              .map((s) => ({
+                title: s.source_name,
+                url: s.source_url as string,
+              }));
+            await saveMessage(
+              currentSessionId,
+              "assistant",
+              text,
+              sourcesData.length > 0 ? sourcesData : undefined
+            );
+          } catch (err) {
+            console.error("Failed to save assistant message:", err);
+          }
         }
       },
     });

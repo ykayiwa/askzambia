@@ -46,7 +46,8 @@ export default function AuthPage() {
       }
       // Redirect to admin dashboard on office subdomain, otherwise to chat
       const isOffice = window.location.hostname.startsWith("office.");
-      router.push(isOffice ? "/admin" : "/chat");
+      const redirectParam = new URLSearchParams(window.location.search).get("redirect");
+      router.push(isOffice ? "/admin" : (redirectParam || "/chat"));
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
