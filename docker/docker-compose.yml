@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+
+  # ── Next.js web app ─────────────────────────────────────────────────────────
+  app:
+    build: ..
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://askzambia:${DB_PASSWORD}@postgres:5432/askzambia
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      LLM_MODEL: ${LLM_MODEL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [askzambia-net]
+
+  # ── PostgreSQL + pgvector ───────────────────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: askzambia
+      POSTGRES_USER: askzambia
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U askzambia"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [askzambia-net]
+
+volumes:
+  postgres_data:
+
+networks:
+  askzambia-net:
+    driver: bridge

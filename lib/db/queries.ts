@@ -1,0 +1,63 @@
+import sql from "@/lib/db/client";
+import type { ChatSession, Message, Feedback } from "@/types/database";
+
+export async function createSession(title?: string): Promise<ChatSession> {
+  const [session] = await sql<ChatSession[]>`
+    INSERT INTO chat_sessions (title)
+    VALUES (${title ?? "New conversation"})
+    RETURNING *
+  `;
+  return session;
+}
+
+export async function getSessions(limit = 50): Promise<ChatSession[]> {
+  return sql<ChatSession[]>`
+    SELECT * FROM chat_sessions
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `;
+}
+
+export async function getSessionMessages(sessionId: string): Promise<Message[]> {
+  return sql<Message[]>`
+    SELECT * FROM messages
+    WHERE session_id = ${sessionId}
+    ORDER BY created_at ASC
+  `;
+}
+
+export async function saveMessage(
+  sessionId: string,
+  role: "user" | "assistant",
+  content: string,
+  sources?: Array<{ title: string; url: string; snippet: string }>
+): Promise<Message> {
+  const [message] = await sql<Message[]>`
+    INSERT INTO messages (session_id, role, content, sources)
+    VALUES (${sessionId}, ${role}, ${content}, ${sources ? sql.json(sources) : null})
+    RETURNING *
+  `;
+  return message;
+}
+
+export async function saveFeedback(
+  messageId: string,
+  rating: 1 | -1
+): Promise<Feedback> {
+  const [feedback] = await sql<Feedback[]>`
+    INSERT INTO feedback (message_id, rating)
+    VALUES (${messageId}, ${rating})
+    RETURNING *
+  `;
+  return feedback;
+}
+
+export async function updateSessionTitle(
+  sessionId: string,
+  title: string
+): Promise<void> {
+  await sql`
+    UPDATE chat_sessions SET title = ${title}
+    WHERE id = ${sessionId}
+  `;
+}
