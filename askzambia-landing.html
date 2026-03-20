@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AskZambia — Africa's National AI Knowledge Platform</title>
+<meta name="description" content="Get instant, verified answers about Zambia's laws, government services, economy, tourism, and culture. Africa's first national AI knowledge platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:        #198754;
+    --green-dark:   #146c43;
+    --green-mid:    #1a9c5b;
+    --green-light:  #d1e7dd;
+    --green-pale:   #f0faf4;
+    --orange:       #E8621C;
+    --copper:       #CE6B2C;
+    --black:        #0f1f14;
+    --dark:         #16213e;
+    --gray:         #64748b;
+    --gray-mid:     #94a3b8;
+    --light:        #f8fafc;
+    --border:       #e2e8f0;
+    --white:        #ffffff;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--black); background: var(--white);
+    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible { outline: 2.5px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+
+  .skip-link {
+    position: absolute; top: -48px; left: 16px;
+    background: var(--green); color: white; padding: 10px 16px;
+    border-radius: 0 0 8px 8px; font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; z-index: 9999; transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 1.2rem; color: var(--green);
+    text-decoration: none; letter-spacing: -0.3px;
+  }
+  .nav-logo-icon {
+    width: 34px; height: 34px; background: var(--green);
+    border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .nav-logo-icon svg { color: white; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: var(--gray); font-size: 0.9rem;
+    font-weight: 500; transition: color 0.2s; padding: 6px 0;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: var(--green) !important; color: white !important;
+    padding: 10px 22px !important; border-radius: 9px !important;
+    font-weight: 600 !important; transition: background 0.2s, transform 0.1s !important;
+    min-height: 44px; display: inline-flex !important; align-items: center !important;
+  }
+  .nav-cta:hover { background: var(--green-dark) !important; transform: translateY(-1px) !important; }
+
+  .nav-hamburger {
+    display: none; background: none; border: none; cursor: pointer;
+    padding: 10px; color: var(--black); border-radius: 8px;
+    min-width: 44px; min-height: 44px; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .nav-hamburger:hover { background: var(--green-pale); }
+  .nav-hamburger[aria-expanded="true"] .icon-menu { display: none; }
+  .nav-hamburger[aria-expanded="false"] .icon-close { display: none; }
+  .nav-hamburger[aria-expanded="true"] .icon-close { display: block; }
+
+  .mobile-nav {
+    display: none; position: fixed; top: 64px; left: 0; right: 0;
+    background: white; border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 99;
+    flex-direction: column; gap: 4px;
+  }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a {
+    text-decoration: none; color: var(--black); font-size: 1rem;
+    font-weight: 500; padding: 14px 12px; border-radius: 8px;
+    transition: background 0.15s; min-height: 44px; display: flex; align-items: center;
+  }
+  .mobile-nav a:hover { background: var(--green-pale); color: var(--green); }
+  .mobile-nav a.nav-cta-mobile {
+    background: var(--green); color: white !important;
+    justify-content: center; font-weight: 600; margin-top: 8px;
+  }
+  .mobile-nav a.nav-cta-mobile:hover { background: var(--green-dark); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 128px 2rem 64px;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(25,135,84,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 80%, rgba(232,98,28,0.06) 0%, transparent 60%),
+      #ffffff;
+    position: relative;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23198754' fill-opacity='0.025'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-pale); border: 1px solid rgba(25,135,84,0.2);
+    color: var(--green-dark); padding: 7px 18px; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 600; margin-bottom: 1.75rem;
+    position: relative; animation: fadeUp 0.6s ease both; letter-spacing: 0.01em;
+  }
+  .hero-badge .pulse-dot {
+    width: 7px; height: 7px; background: var(--green); border-radius: 50%;
+    animation: pulseDot 2.4s ease-in-out infinite; flex-shrink: 0;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 6.5vw, 4.75rem);
+    font-weight: 800; line-height: 1.08; letter-spacing: -0.035em;
+    max-width: 820px; position: relative;
+    animation: fadeUp 0.6s ease 0.08s both; color: var(--black);
+  }
+  .hero h1 .gradient-text {
+    background: linear-gradient(135deg, var(--green) 0%, var(--copper) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.15rem; color: var(--gray); max-width: 540px;
+    margin: 1.5rem auto 2.25rem; line-height: 1.7;
+    position: relative; animation: fadeUp 0.6s ease 0.16s both;
+  }
+
+  /* ─── SEARCH ─── */
+  .search-container { width: 100%; max-width: 680px; position: relative; animation: fadeUp 0.6s ease 0.24s both; }
+  .search-box {
+    width: 100%; display: flex; align-items: center;
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 6px 6px 6px 16px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-box:focus-within {
+    border-color: var(--green);
+    box-shadow: 0 4px 32px rgba(25,135,84,0.14), 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .search-icon { color: var(--gray-mid); flex-shrink: 0; margin-right: 4px; }
+  .search-box input {
+    flex: 1; border: none; outline: none; font-size: 1rem; font-family: inherit;
+    background: transparent; color: var(--black); padding: 12px 8px; min-height: 44px;
+  }
+  .search-box input::placeholder { color: #b8c4cc; }
+  .search-btn {
+    background: var(--green); color: white; border: none; border-radius: 11px;
+    padding: 0 24px; font-size: 0.95rem; font-weight: 600; font-family: inherit;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: background 0.2s, transform 0.1s; white-space: nowrap; min-height: 44px; flex-shrink: 0;
+  }
+  .search-btn:hover { background: var(--green-dark); transform: scale(1.02); }
+  .search-btn:active { transform: scale(0.98); }
+  .suggestions {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-top: 1rem; animation: fadeUp 0.6s ease 0.32s both;
+  }
+  .suggestion {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 9px 16px; border-radius: 50px; font-size: 0.82rem; color: var(--gray);
+    cursor: pointer; transition: all 0.18s; text-decoration: none; font-family: inherit;
+    min-height: 36px; display: inline-flex; align-items: center;
+  }
+  .suggestion:hover { border-color: var(--green); color: var(--green); background: var(--green-pale); transform: translateY(-1px); }
+
+  /* ─── STATS ─── */
+  .stats-bar {
+    display: flex; justify-content: center; gap: 0; margin-top: 3.5rem;
+    position: relative; animation: fadeUp 0.6s ease 0.4s both;
+    border: 1px solid var(--border); border-radius: 16px; background: white;
+    overflow: hidden; max-width: 520px; width: 100%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .stat { flex: 1; text-align: center; padding: 20px 16px; position: relative; }
+  .stat + .stat::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 1px; background: var(--border); }
+  .stat-num {
+    font-size: 1.5rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--green), var(--copper));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.1;
+  }
+  .stat-label { font-size: 0.73rem; color: var(--gray-mid); margin-top: 4px; font-weight: 500; line-height: 1.3; }
+
+  /* ─── SECTION SHARED ─── */
+  .section-tag {
+    display: inline-block; font-size: 0.74rem; font-weight: 700; color: var(--green);
+    text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.75rem;
+    background: var(--green-pale); padding: 4px 12px; border-radius: 50px;
+  }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-header h2 { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.2; color: var(--black); }
+  .section-header p { color: var(--gray); font-size: 1.05rem; max-width: 500px; margin: 0.75rem auto 0; line-height: 1.65; }
+
+  /* ─── TOPICS ─── */
+  .topics { padding: 96px 2rem; max-width: 1120px; margin: 0 auto; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+  .topic-card {
+    background: var(--white); border: 1.5px solid var(--border); border-radius: 16px;
+    padding: 28px 24px; cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .topic-card:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(25,135,84,0.1); transform: translateY(-3px); }
+  .topic-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; margin-bottom: 1rem; flex-shrink: 0; }
+  .topic-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 7px; color: var(--black); }
+  .topic-card p { font-size: 0.85rem; color: var(--gray); line-height: 1.6; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-it-works { background: var(--light); padding: 96px 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .how-inner { max-width: 920px; margin: 0 auto; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; position: relative; }
+  .steps::before {
+    content: ''; position: absolute; top: 24px;
+    left: calc(16.66% + 12px); right: calc(16.66% + 12px); height: 1px;
+    background: linear-gradient(90deg, var(--green-light), var(--green), var(--green-light)); pointer-events: none;
+  }
+  .step { text-align: center; padding: 0 1rem; }
+  .step-num {
+    width: 48px; height: 48px; background: var(--green); color: white; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.05rem; margin-bottom: 1.25rem; position: relative; z-index: 1;
+    box-shadow: 0 0 0 6px var(--light), 0 0 0 7px var(--border);
+  }
+  .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 9px; color: var(--black); }
+  .step p { font-size: 0.87rem; color: var(--gray); line-height: 1.65; }
+
+  /* ─── DEMO ─── */
+  .demo-section { padding: 96px 2rem; max-width: 860px; margin: 0 auto; }
+  .demo-window {
+    background: #0f1a10; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .demo-titlebar {
+    background: rgba(255,255,255,0.04); padding: 14px 18px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .demo-dot.r { background: #ff5f57; } .demo-dot.y { background: #febc2e; } .demo-dot.g { background: #28c840; }
+  .demo-titlebar-url {
+    margin-left: 1rem; display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); padding: 5px 14px; border-radius: 6px;
+    font-size: 0.78rem; color: rgba(255,255,255,0.45);
+  }
+  .demo-body { padding: 2rem; display: flex; flex-direction: column; gap: 20px; }
+  .demo-msg { display: flex; gap: 12px; align-items: flex-start; }
+  .demo-msg.user { flex-direction: row-reverse; }
+  .demo-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.02em; }
+  .demo-av.user { background: var(--orange); color: white; }
+  .demo-av.ai   { background: var(--green); color: white; }
+  .demo-bubble { padding: 12px 16px; border-radius: 14px; font-size: 0.875rem; line-height: 1.65; max-width: 80%; }
+  .demo-bubble.user-b { background: rgba(232,98,28,0.14); color: #ffddc9; border-bottom-right-radius: 4px; }
+  .demo-bubble.ai-b   { background: rgba(25,135,84,0.12); color: #c8e6d5; border-bottom-left-radius: 4px; }
+  .demo-bubble strong { color: #5ec99a; }
+  .demo-sources { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .demo-src { display: inline-flex; align-items: center; gap: 5px; background: rgba(25,135,84,0.18); color: #7dd3a8; font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 5px; }
+
+  /* ─── DATA SOURCES ─── */
+  .data-sources { background: var(--light); padding: 96px 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .data-inner { max-width: 1120px; margin: 0 auto; }
+  .source-logos { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; margin-top: 2.75rem; }
+  .source-badge {
+    background: var(--white); border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 16px 22px; display: flex; align-items: center; gap: 12px;
+    font-size: 0.84rem; font-weight: 600; color: var(--black);
+    transition: border-color 0.2s, box-shadow 0.2s; line-height: 1.35;
+  }
+  .source-badge:hover { border-color: var(--green); box-shadow: 0 4px 16px rgba(25,135,84,0.08); }
+  .src-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 112px 2rem; text-align: center;
+    background: linear-gradient(150deg, #198754 0%, #146c43 55%, #0f5132 100%);
+    color: white; position: relative; overflow: hidden;
+  }
+  .cta-section::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/svg%3E"); }
+  .cta-section h2 { font-size: clamp(1.9rem, 4vw, 2.75rem); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1rem; position: relative; }
+  .cta-section p { font-size: 1.1rem; opacity: 0.85; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.65; position: relative; }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: white; color: var(--green-dark); padding: 17px 40px; border-radius: 12px;
+    font-size: 1rem; font-weight: 700; text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s; position: relative;
+    min-height: 56px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,0.22); }
+
+  /* ─── FOOTER ─── */
+  footer { background: var(--dark); color: rgba(255,255,255,0.55); padding: 3rem 2rem; }
+  .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
+  .footer-brand { font-weight: 700; font-size: 1.05rem; color: white; display: flex; align-items: center; gap: 10px; }
+  .footer-brand-icon { width: 30px; height: 30px; background: var(--green); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .footer-links { display: flex; gap: 1.75rem; flex-wrap: wrap; }
+  .footer-links a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 0.84rem; transition: color 0.2s; }
+  .footer-links a:hover { color: white; }
+  .footer-note { font-size: 0.76rem; width: 100%; text-align: center; margin-top: 1.5rem; opacity: 0.5; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.85); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+    .topic-card:hover, .cta-btn:hover, .search-btn:hover, .suggestion:hover { transform: none; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .hero { padding: 96px 1.25rem 48px; }
+    .search-btn span { display: none; }
+    .search-btn { padding: 0 16px; }
+    .steps { grid-template-columns: 1fr; gap: 2.5rem; }
+    .steps::before { display: none; }
+    .topics-grid { grid-template-columns: 1fr 1fr; }
+    .cta-section { padding: 80px 1.5rem; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+  @media (max-width: 480px) {
+    .topics-grid { grid-template-columns: 1fr; }
+    .stats-bar { flex-direction: column; }
+    .stat + .stat::before { display: none; }
+    .section-header h2 { font-size: 1.75rem; }
+    .hero h1 { font-size: 2.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<nav role="navigation" aria-label="Main navigation">
+  <a class="nav-logo" href="#">
+    <span class="nav-logo-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </span>
+    AskZambia
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="#topics">Topics</a>
+    <a href="#how">How it works</a>
+    <a href="#sources">Sources</a>
+    <a class="nav-cta" href="askzambia-chat.html" target="_blank" rel="noopener">Open Chat →</a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-expanded="false" aria-controls="mobileNav" aria-label="Toggle navigation menu">
+    <svg class="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</nav>
+
+<nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+  <a href="#topics" onclick="closeMobileNav()">Topics</a>
+  <a href="#how" onclick="closeMobileNav()">How it works</a>
+  <a href="#sources" onclick="closeMobileNav()">Sources</a>
+  <a class="nav-cta-mobile" href="askzambia-chat.html" target="_blank" rel="noopener">Open Chat →</a>
+</nav>
+
+<section class="hero" id="hero" aria-labelledby="hero-heading">
+  <div id="main-content" tabindex="-1" style="position:absolute;top:0;"></div>
+  <div class="hero-badge" role="status">
+    <span class="pulse-dot" aria-hidden="true"></span>
+    Africa's First National AI Knowledge Platform
+  </div>
+  <h1 id="hero-heading">Ask anything about <span class="gradient-text">Zambia</span></h1>
+  <p class="hero-sub">Get instant, accurate answers about Zambia's laws, history, tourism, economy, culture, and government — powered by verified national data sources.</p>
+  <div class="search-container" role="search">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="search" placeholder="What would you like to know about Zambia?" id="searchInput" aria-label="Search AskZambia" onkeydown="if(event.key==='Enter') handleSearch()" autocomplete="off">
+      <button class="search-btn" onclick="handleSearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Ask Zambia</span>
+      </button>
+    </div>
+    <div class="suggestions" role="list" aria-label="Search suggestions">
+      <button role="listitem" class="suggestion" onclick="fillSearch('What are my rights under the Zambian constitution?')">Constitutional rights</button>
+      <button role="listitem" class="suggestion" onclick="fillSearch('How do I register a business in Zambia?')">Register a business</button>
+      <button role="listitem" class="suggestion" onclick="fillSearch('Best places to visit in Zambia?')">Tourism guide</button>
+      <button role="listitem" class="suggestion" onclick="fillSearch('What is Zambia\'s GDP in 2024?')">Economic data</button>
+    </div>
+  </div>
+  <div class="stats-bar" aria-label="Platform statistics">
+    <div class="stat"><div class="stat-num">10,000+</div><div class="stat-label">Government<br>documents</div></div>
+    <div class="stat"><div class="stat-num">73+</div><div class="stat-label">Ethnic cultures<br>documented</div></div>
+    <div class="stat"><div class="stat-num">60 yrs</div><div class="stat-label">National history<br>covered</div></div>
+  </div>
+</section>
+
+<section class="topics" id="topics" aria-labelledby="topics-heading">
+  <div class="section-header">
+    <div class="section-tag">Explore by topic</div>
+    <h2 id="topics-heading">A living encyclopedia of Zambia</h2>
+    <p>From constitutional law to Victoria Falls, AskZambia covers the information that matters most to citizens and visitors.</p>
+  </div>
+  <div class="topics-grid">
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+laws+and+constitution+rights" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#e8f5e9;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#198754" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <h3>Laws &amp; Constitution</h3>
+      <p>Understand your rights, legal processes, and constitutional provisions in plain language.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+government+services+NRC+passport" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#fff3e0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E8621C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      <h3>Government Services</h3>
+      <p>NRC applications, passports, tax filing, business registration, and public services.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+tourism+Victoria+Falls+national+parks" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#e3f2fd;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <h3>Tourism &amp; Travel</h3>
+      <p>Victoria Falls, national parks, cultural festivals, accommodation, and travel guides.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+education+system+UNZA+schools" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#fce4ec;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <h3>Education</h3>
+      <p>School systems, university admissions, scholarships, curriculum, and exam results.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+GDP+economy+copper+investment" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#f3e5f5;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6A1B9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <h3>Economy &amp; Business</h3>
+      <p>GDP data, trade, investment incentives, mining sector, agriculture, and market reports.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+culture+heritage+ethnic+groups+ceremonies" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#e0f7fa;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00838F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <h3>Culture &amp; Heritage</h3>
+      <p>Over 73 ethnic groups, traditional ceremonies, languages, music, art, and history.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+healthcare+hospitals+NHIMA+health" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#fff8e1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      <h3>Healthcare</h3>
+      <p>Health facilities, insurance, disease prevention, maternal care, and public health data.</p>
+    </a>
+    <a class="topic-card" href="askzambia-chat.html?q=Zambia+infrastructure+energy+roads+development" target="_blank" rel="noopener">
+      <div class="topic-icon" style="background:#e8eaf6;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3949AB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <h3>Infrastructure</h3>
+      <p>Energy, roads, telecom, housing, and Zambia's development projects and plans.</p>
+    </a>
+  </div>
+</section>
+
+<section class="how-it-works" id="how" aria-labelledby="how-heading">
+  <div class="how-inner">
+    <div class="section-header">
+      <div class="section-tag">How it works</div>
+      <h2 id="how-heading">Verified answers in seconds</h2>
+      <p>AskZambia uses retrieval-augmented AI to search official Zambian data sources and deliver trustworthy, cited answers.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num" aria-hidden="true">1</div><h3>Ask your question</h3><p>Type any question about Zambia in natural language — English, Bemba, Nyanja, or Tonga.</p></div>
+      <div class="step"><div class="step-num" aria-hidden="true">2</div><h3>AI searches verified sources</h3><p>Our AI retrieves information from official government databases, legal archives, and curated national datasets.</p></div>
+      <div class="step"><div class="step-num" aria-hidden="true">3</div><h3>Get a cited answer</h3><p>Receive a clear, accurate response with source citations so you can verify the information yourself.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="demo-section" id="demo" aria-labelledby="demo-heading">
+  <div class="section-header">
+    <div class="section-tag">See it in action</div>
+    <h2 id="demo-heading">A conversation with AskZambia</h2>
+  </div>
+  <div class="demo-window" role="img" aria-label="Demo chat showing business registration answer">
+    <div class="demo-titlebar" aria-hidden="true">
+      <span class="demo-dot r"></span><span class="demo-dot y"></span><span class="demo-dot g"></span>
+      <div class="demo-titlebar-url"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>askzambia.com</div>
+    </div>
+    <div class="demo-body" aria-hidden="true">
+      <div class="demo-msg user"><div class="demo-av user">YK</div><div class="demo-bubble user-b">What do I need to register a small business in Lusaka?</div></div>
+      <div class="demo-msg">
+        <div class="demo-av ai">AZ</div>
+        <div class="demo-bubble ai-b">
+          To register a small business in Lusaka, complete these steps with <strong>PACRA</strong>:<br><br>
+          <strong>1.</strong> Reserve a name online at pacra.org.zm (K50)<br>
+          <strong>2.</strong> Submit registration form + certified NRC/passport copies<br>
+          <strong>3.</strong> Pay registration fee — <strong>K525</strong> for a private company<br>
+          <strong>4.</strong> Obtain your <strong>TPIN</strong> from ZRA for tax purposes<br><br>
+          The full process typically takes <strong>1–3 business days</strong> online.
+          <div class="demo-sources">
+            <span class="demo-src"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>PACRA Guidelines 2025</span>
+            <span class="demo-src"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>ZRA Registration Portal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="data-sources" id="sources" aria-labelledby="sources-heading">
+  <div class="data-inner">
+    <div class="section-header">
+      <div class="section-tag">Trusted knowledge</div>
+      <h2 id="sources-heading">Powered by official data sources</h2>
+      <p>Every answer is grounded in verified, authoritative Zambian data.</p>
+    </div>
+    <div class="source-logos" role="list">
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#e8f5e9;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#198754" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div>Government of<br>Zambia (GRZ)</div></div>
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#e3f2fd;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div>ZamStats — Central<br>Statistical Office</div></div>
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#e8eaf6;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3949AB" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div>Zambia Legal<br>Information Institute</div></div>
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#fff8e1;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div>National Assembly<br>of Zambia</div></div>
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#f3e5f5;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A1B9A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div>Bank of<br>Zambia</div></div>
+      <div class="source-badge" role="listitem"><div class="src-icon" style="background:#e0f7fa;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00838F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div>Zambia Tourism<br>Agency</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="cta" aria-labelledby="cta-heading">
+  <h2 id="cta-heading">Start asking. Start knowing.</h2>
+  <p>AskZambia is free for every citizen, visitor, and friend of Zambia. Your national knowledge, at your fingertips.</p>
+  <a class="cta-btn" href="askzambia-chat.html" target="_blank" rel="noopener">
+    Ask Your First Question
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</section>
+
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-brand-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+      AskZambia
+    </div>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="#">About</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+    </nav>
+    <p class="footer-note">Africa's First National AI Knowledge Platform &nbsp;·&nbsp; © 2025 AskZambia. All information is sourced from verified Zambian government and official sources.</p>
+  </div>
+</footer>
+
+<script>
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+  hamburger.setAttribute('aria-expanded', String(!isOpen));
+  mobileNav.classList.toggle('open', !isOpen);
+});
+function closeMobileNav() {
+  hamburger.setAttribute('aria-expanded', 'false');
+  mobileNav.classList.remove('open');
+}
+document.addEventListener('click', (e) => { if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) closeMobileNav(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobileNav(); });
+function handleSearch() {
+  const val = document.getElementById('searchInput').value.trim();
+  if (!val) return;
+  window.open('askzambia-chat.html?q=' + encodeURIComponent(val), '_blank', 'noopener');
+}
+function fillSearch(text) {
+  window.open('askzambia-chat.html?q=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+</script>
+</body>
+</html>

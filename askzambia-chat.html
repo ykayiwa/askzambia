@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AskZambia — National AI Knowledge Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:       #198754;
+      --green-dark:  #146c43;
+      --green-mid:   #1e9e60;
+      --green-light: #d1e7dd;
+      --green-pale:  #f0faf4;
+      --orange:      #E8621C;
+      --sidebar-bg:  #f5f7f5;
+      --sidebar-w:   264px;
+      --border:      #e0e8e0;
+      --border-soft: #edf2ed;
+      --text:        #0f1f14;
+      --muted:       #617161;
+      --ai-bg:       #f8fdf8;
+      --radius:      14px;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fff; color: var(--text); overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    :focus-visible { outline: 2.5px solid var(--green); outline-offset: 2px; border-radius: 5px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .app { display: flex; height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      overflow: hidden; transition: transform 0.25s ease;
+    }
+    .sb-head { padding: 16px 14px 14px; border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-bottom: 13px; }
+    .brand-mark {
+      width: 32px; height: 32px; background: var(--green); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .brand-mark svg { color: white; }
+    .brand-text { line-height: 1.2; }
+    .brand-name { font-weight: 700; font-size: 16px; color: var(--green); letter-spacing: -0.3px; display: block; }
+    .brand-tag  { font-size: 9.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+    .new-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+      gap: 7px; padding: 10px 14px; background: var(--green); color: #fff;
+      border: none; border-radius: 9px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; font-family: inherit; min-height: 44px;
+    }
+    .new-btn:hover { background: var(--green-dark); }
+    .sb-body { flex: 1; overflow-y: auto; padding: 10px 8px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .h-group { margin-bottom: 20px; }
+    .h-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); padding: 2px 10px 7px; }
+    .h-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px;
+      cursor: pointer; font-size: 13px; color: var(--text); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; transition: background 0.12s; min-height: 36px;
+    }
+    .h-item svg  { flex-shrink: 0; color: var(--muted); }
+    .h-item span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .h-item:hover  { background: rgba(25,135,84,0.07); }
+    .h-item.active { background: rgba(25,135,84,0.13); font-weight: 500; }
+    .sb-foot { padding: 12px 14px; border-top: 1px solid var(--border); }
+    .sb-foot-inner { display: flex; align-items: center; gap: 8px; }
+    .sb-foot-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; flex-shrink: 0; animation: sbPulse 3s ease-in-out infinite; }
+    .sb-foot-text { font-size: 11px; color: var(--muted); line-height: 1.45; }
+    .sb-foot-text strong { color: var(--text); font-size: 11.5px; display: block; margin-bottom: 1px; }
+    @keyframes sbPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .top-bar {
+      height: 54px; border-bottom: 1px solid var(--border); padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; background: #fff;
+    }
+    .top-left { display: flex; align-items: center; gap: 10px; }
+    .menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      padding: 8px; color: var(--text); border-radius: 7px; transition: background 0.12s;
+      min-width: 44px; min-height: 44px; align-items: center; justify-content: center;
+    }
+    .menu-btn:hover { background: var(--green-pale); }
+    .top-divider { width: 1px; height: 18px; background: var(--border); display: none; }
+    #chatTitle { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px; }
+    .top-right { display: flex; align-items: center; gap: 8px; }
+    .sign-in-btn {
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+      background: #fff; font-size: 13px; font-weight: 500; color: var(--text);
+      cursor: pointer; transition: border-color 0.15s, color 0.15s; font-family: inherit; min-height: 36px;
+    }
+    .sign-in-btn:hover { border-color: var(--green); color: var(--green); }
+
+    /* ── Messages ── */
+    .msgs-wrap { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .msgs-inner { max-width: 780px; margin: 0 auto; padding: 32px 24px 16px; display: flex; flex-direction: column; gap: 28px; }
+
+    .welcome { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 24px 36px; }
+    .welcome-emblem { width: 76px; height: 76px; margin-bottom: 20px; }
+    .welcome-title { font-size: 28px; font-weight: 700; color: var(--green); margin-bottom: 10px; letter-spacing: -0.5px; line-height: 1.15; }
+    .welcome-sub   { font-size: 15.5px; color: var(--muted); line-height: 1.7; max-width: 480px; margin-bottom: 36px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; max-width: 620px; }
+    .chip {
+      padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 22px;
+      font-size: 13.5px; cursor: pointer; transition: all 0.15s;
+      background: #fff; color: var(--text); font-family: inherit; min-height: 44px;
+    }
+    .chip:hover { border-color: var(--green); background: var(--green-pale); color: var(--green-dark); }
+
+    .msg { display: flex; gap: 12px; width: 100%; }
+    .msg.user { flex-direction: row-reverse; }
+    .av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; font-size: 11px; letter-spacing: 0.03em; }
+    .msg.user .av { background: var(--orange); color: #fff; }
+    .msg.ai   .av { background: var(--green);  color: #fff; }
+    .msg-body { flex: 1; min-width: 0; }
+    .bubble { padding: 14px 18px; border-radius: 18px; font-size: 15px; line-height: 1.7; }
+    .msg.user .bubble { background: var(--green); color: #fff; border-bottom-right-radius: 5px; display: inline-block; max-width: 78%; float: right; }
+    .msg.ai   .bubble { background: var(--ai-bg); border: 1px solid var(--border-soft); border-bottom-left-radius: 5px; color: var(--text); }
+    .msg.ai .bubble strong { color: var(--green-dark); }
+
+    .typing { display: flex; gap: 5px; align-items: center; padding: 14px 18px; background: var(--ai-bg); border: 1px solid var(--border-soft); border-radius: 18px; border-bottom-left-radius: 5px; width: fit-content; }
+    .typing span { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: tdot 1.2s infinite ease-in-out; }
+    .typing span:nth-child(2) { animation-delay: 0.18s; }
+    .typing span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes tdot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.45; } 40% { transform: translateY(-6px); opacity: 1; } }
+
+    .sources { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+    .sources-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); width: 100%; margin-bottom: 2px; }
+    .src-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px;
+      border: 1px solid var(--border); border-radius: 20px; font-size: 12px;
+      color: var(--green-dark); text-decoration: none; background: #fff;
+      font-weight: 500; transition: all 0.14s; min-height: 30px;
+    }
+    .src-chip:hover { background: var(--green-pale); border-color: var(--green); }
+    .src-chip svg { flex-shrink: 0; opacity: 0.7; }
+
+    .cursor { display: inline-block; width: 2px; height: 15px; background: var(--green); vertical-align: text-bottom; margin-left: 1px; animation: cblink 0.75s infinite; }
+    @keyframes cblink { 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+
+    /* ── Input ── */
+    .input-wrap { flex-shrink: 0; border-top: 1px solid var(--border); background: #fff; padding: 14px 24px 18px; }
+    .input-inner { max-width: 780px; margin: 0 auto; position: relative; }
+    .input-box {
+      width: 100%; padding: 14px 52px 14px 18px; border: 1.5px solid var(--border);
+      border-radius: var(--radius); font-size: 15px; font-family: inherit;
+      resize: none; outline: none; line-height: 1.5; max-height: 160px;
+      overflow-y: auto; color: var(--text); transition: border-color 0.15s; background: #fdfffe;
+    }
+    .input-box:focus { border-color: var(--green); }
+    .input-box::placeholder { color: #a8bca8; }
+    .send-btn {
+      position: absolute; right: 10px; bottom: 9px;
+      width: 36px; height: 36px; background: var(--green); border: none;
+      border-radius: 9px; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: background 0.14s; flex-shrink: 0;
+    }
+    .send-btn:hover    { background: var(--green-dark); }
+    .send-btn:disabled { background: #c0d4c0; cursor: not-allowed; }
+    .send-btn svg { color: #fff; }
+    .input-hint { text-align: center; font-size: 11px; color: var(--muted); margin-top: 9px; opacity: 0.75; }
+
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 199; }
+    .sidebar-overlay.show { display: block; }
+
+    @media (max-width: 720px) {
+      .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 200; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.14); }
+      .menu-btn { display: flex !important; }
+      .top-divider { display: block !important; }
+      .sign-in-btn { display: none; }
+      .msgs-inner { padding: 20px 14px 12px; }
+      .input-wrap  { padding: 10px 14px 14px; }
+      #chatTitle { max-width: 200px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .sidebar { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="app" role="application" aria-label="AskZambia Chat">
+
+  <aside class="sidebar" id="sidebar" aria-label="Conversation history">
+    <div class="sb-head">
+      <a class="brand" href="askzambia-landing.html" aria-label="AskZambia — go to home page">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">AskZambia</span>
+          <span class="brand-tag">Beta</span>
+        </span>
+      </a>
+      <button class="new-btn" onclick="newChat()" aria-label="Start a new conversation">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Chat
+      </button>
+    </div>
+    <div class="sb-body" id="historyList" aria-label="Past conversations" role="list"></div>
+    <div class="sb-foot">
+      <div class="sb-foot-inner">
+        <span class="sb-foot-dot" aria-hidden="true"></span>
+        <div class="sb-foot-text">
+          <strong>AskZambia</strong>
+          Africa's First National AI · Beta
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main" aria-label="Chat area">
+    <div class="top-bar">
+      <div class="top-left">
+        <button class="menu-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar" aria-controls="sidebar">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="top-divider" aria-hidden="true"></span>
+        <span id="chatTitle" aria-live="polite">New Conversation</span>
+      </div>
+      <div class="top-right">
+        <button class="sign-in-btn">Sign in</button>
+      </div>
+    </div>
+
+    <div class="msgs-wrap" id="msgsWrap" role="log" aria-label="Messages" aria-live="polite" aria-atomic="false">
+      <div class="msgs-inner" id="msgs">
+        <div class="welcome" id="welcome">
+          <svg class="welcome-emblem" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AskZambia emblem" role="img">
+            <rect width="76" height="76" rx="20" fill="#198754"/>
+            <rect width="76" height="76" rx="20" fill="url(#wg)" fill-opacity="0.3"/>
+            <circle cx="38" cy="31" r="12" stroke="white" stroke-width="2.5"/>
+            <path d="m50 43-4.24-4.24" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M26 52h24" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+            <defs><linearGradient id="wg" x1="0" y1="0" x2="76" y2="76" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs>
+          </svg>
+          <h1 class="welcome-title">Ask anything about Zambia</h1>
+          <p class="welcome-sub">Get instant, cited answers sourced from verified Zambian legislation, government data, and official records.</p>
+          <div class="chips" role="list" aria-label="Suggested questions">
+            <button class="chip" role="listitem" onclick="askChip(this)">How do I register a business?</button>
+            <button class="chip" role="listitem" onclick="askChip(this)">What are my constitutional rights?</button>
+            <button class="chip" role="listitem" onclick="askChip(this)">How do I get a Zambian passport?</button>
+            <button class="chip" role="listitem" onclick="askChip(this)">What is Zambia's current GDP?</button>
+            <button class="chip" role="listitem" onclick="askChip(this)">Tell me about Victoria Falls</button>
+            <button class="chip" role="listitem" onclick="askChip(this)">How does the education system work?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-wrap">
+      <div class="input-inner">
+        <label for="input" class="sr-only">Ask a question about Zambia</label>
+        <textarea class="input-box" id="input" placeholder="Ask anything about Zambia…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)" aria-label="Your question"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send" aria-label="Send message">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <p class="input-hint">Responses are drawn from verified Zambian sources. Always confirm critical matters with the relevant official body.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+const KB = [
+  { match: ['constitution','rights','fundamental','bill of rights','citizen','citizenship','article'],
+    answer: `Zambia's <strong>Constitution (2016)</strong> guarantees every citizen fundamental rights under Part III — the Bill of Rights:\n\n<strong>Right to Life</strong> — Every person has the right to life and dignity. (Article 12)\n\n<strong>Personal Liberty</strong> — No person may be deprived of liberty except by due process of law. Detention without charge beyond 48 hours is unlawful. (Article 13)\n\n<strong>Freedom of Expression</strong> — Every person has the right to hold opinions and receive or impart information freely. (Article 20)\n\n<strong>Right to Education</strong> — Every person has the right to free, quality basic education. (Article 43)\n\n<strong>Equality &amp; Non-Discrimination</strong> — All persons are equal before the law. Discrimination based on sex, race, tribe, religion, or disability is prohibited. (Article 23)\n\n<strong>Right to Property</strong> — No person may be deprived of property without fair compensation. (Article 16)\n\nCitizenship is acquired by birth, descent, or registration under Article 35.`,
+    sources: [{ name: 'Constitution of Zambia 2016', url: 'https://www.parliament.gov.zm/node/3899' }, { name: 'Zambia Legal Information Institute', url: 'https://zambialii.org' }] },
+  { match: ['business','register','company','pacra','incorporation','sole trader','startup','entrepreneur'],
+    answer: `Business registration in Zambia is administered by <strong>PACRA</strong> (Patents and Companies Registration Agency).\n\n<strong>Step 1 — Reserve your business name</strong>\nSearch and reserve your preferred name at pacra.org.zm. Fee: <strong>K50</strong>.\n\n<strong>Step 2 — Choose your business structure</strong>\n• Sole Trader — <strong>K150</strong>\n• Partnership — <strong>K200</strong>\n• Private Limited Company (Ltd) — <strong>K525</strong>\n\n<strong>Step 3 — Submit registration documents</strong>\nRequired: completed registration form + certified copies of NRC or passport for all directors/owners.\n\n<strong>Step 4 — Obtain your TPIN from ZRA</strong>\nRegister for a Tax Payer Identification Number at zra.org.zm. This is mandatory before trading.\n\n<strong>Step 5 — Open a business bank account</strong>\nMost banks require your certificate of incorporation and TPIN.\n\nThe full process typically takes <strong>1–3 business days</strong> when done online.`,
+    sources: [{ name: 'PACRA — pacra.org.zm', url: 'https://www.pacra.org.zm' }, { name: 'ZRA TPIN Registration', url: 'https://www.zra.org.zm' }, { name: 'MSME Policy 2019', url: 'https://www.mcti.gov.zm' }] },
+  { match: ['tax','income tax','vat','zra','tpin','turnover tax','corporate','paye','revenue'],
+    answer: `Zambia's tax system is administered by <strong>ZRA</strong> (Zambia Revenue Authority).\n\n<strong>Turnover Tax</strong> — <strong>4%</strong> of gross turnover for businesses with annual turnover below K800,000.\n\n<strong>Personal Income Tax</strong>:\n• Up to K57,600 — <strong>0%</strong>\n• K57,601 – K819,000 — <strong>25%</strong>\n• K819,001 – K1,120,000 — <strong>30%</strong>\n• Above K1,120,000 — <strong>37.5%</strong>\n\n<strong>Corporate Income Tax</strong> — <strong>30%</strong> standard rate.\n\n<strong>VAT</strong> — <strong>16%</strong> standard rate. Register when annual turnover exceeds K800,000.\n\nAll filings at <strong>taxonline.zra.org.zm</strong>.`,
+    sources: [{ name: 'ZRA Tax Guide 2024', url: 'https://www.zra.org.zm/tax-guide' }, { name: 'Income Tax Act Cap 323', url: 'https://zambialii.org' }] },
+  { match: ['passport','immigration','travel document','visa','renew','nrc','national registration card'],
+    answer: `Zambia passports are issued by the <strong>Department of Immigration</strong>.\n\n<strong>Ordinary Passport (Adult)</strong>\n• Standard: <strong>K700</strong> (15–21 working days)\n• Emergency: <strong>K1,400</strong> (3 working days)\n• Documents: Original birth certificate, valid NRC, supporting affidavit\n\n<strong>Child Passport</strong>\n• Fee: <strong>K400</strong>\n• Documents: Birth certificate, both parents' NRCs, school letter\n\n<strong>NRC</strong> — Required from age 16. Free. Apply at your nearest District Registration Office.\n\nApply online at <strong>eservices.gov.zm</strong>. Pay via Zanaco, ZNBS, or mobile money (MTN/Airtel).`,
+    sources: [{ name: 'Zambia Department of Immigration', url: 'https://www.zambiaimmigration.gov.zm' }, { name: 'Smart Zambia eServices', url: 'https://eservices.gov.zm' }] },
+  { match: ['tourism','visit','victoria falls','safari','park','national park','kafue','luangwa','tourist','livingstone','mosi'],
+    answer: `Zambia is one of Africa's premier safari and nature destinations.\n\n<strong>Victoria Falls (Mosi-oa-Tunya)</strong>\nThe world's largest waterfall by volume, in Livingstone. UNESCO World Heritage Site. Best time: <strong>February–May</strong>.\n\n<strong>South Luangwa National Park</strong>\nAmong Africa's finest wildlife sanctuaries — renowned for walking safaris and leopard sightings. Best: <strong>May–October</strong>.\n\n<strong>Kafue National Park</strong>\nZambia's largest park (22,400 km²). Lions, cheetahs, wild dogs, and 500+ bird species.\n\n<strong>Lower Zambezi National Park</strong>\nExceptional canoe safaris with hippos, crocodiles, and elephants.\n\n<strong>KAZA UniVisa</strong> covers Zambia + Zimbabwe — <strong>USD $50</strong>, available on arrival.`,
+    sources: [{ name: 'Zambia Tourism Agency', url: 'https://www.zambiatourism.com' }, { name: 'ZAWA — Zambia Wildlife Authority', url: 'https://www.zawa.org.zm' }] },
+  { match: ['gdp','economy','copper','kwacha','inflation','growth','economic','bank of zambia','boz','imf','debt'],
+    answer: `<strong>Zambia Economic Overview (2024)</strong>\n\n<strong>GDP:</strong> ~USD $29 billion (World Bank, 2024)\n<strong>GDP Growth:</strong> ~4.7% (IMF projection)\n<strong>Population:</strong> ~20.5 million\n<strong>GDP per Capita:</strong> ~USD $1,400\n\n<strong>Key Sectors</strong>\n• <strong>Copper Mining</strong> — World's 7th largest producer. ~70% of export earnings.\n• <strong>Agriculture</strong> — ~15% of GDP. Maize, tobacco, cotton, soybeans.\n• <strong>Services</strong> — Growing financial services, telecoms, and tourism.\n\n<strong>Currency:</strong> Zambian Kwacha (ZMW). ~USD 1 ≈ K27 (2024)\n<strong>Inflation:</strong> ~13.5% (Bank of Zambia, 2024)\n\nZambia completed a landmark <strong>USD $6.3 billion</strong> debt restructuring in 2023.`,
+    sources: [{ name: 'Bank of Zambia', url: 'https://www.boz.zm' }, { name: 'World Bank — Zambia', url: 'https://www.worldbank.org/en/country/zambia' }, { name: 'IMF Zambia Report 2024', url: 'https://www.imf.org' }] },
+  { match: ['education','school','university','unza','exam','ecz','grade','bursary','helsb','curriculum','cbu','college'],
+    answer: `<strong>Zambia's Education System</strong>\n\n<strong>Structure</strong>\n• <strong>Primary:</strong> Grades 1–7. Free and compulsory by law.\n• <strong>Junior Secondary:</strong> Grades 8–9\n• <strong>Senior Secondary:</strong> Grades 10–12\n• <strong>Tertiary:</strong> Universities, colleges, vocational institutes\n\n<strong>National Examinations</strong> (ECZ)\n• Grade 7, Grade 9, and Grade 12 School Certificate\n\n<strong>Major Universities</strong>\n• <strong>UNZA</strong> — Lusaka, founded 1966\n• <strong>CBU</strong> — Copperbelt University, Kitwe\n• <strong>Mulungushi University</strong> — Kabwe\n• <strong>ZAOU</strong> — Distance learning\n\n<strong>HELSB</strong> provides bursaries and loans. Apply at helsb.org.zm (typically June–August).`,
+    sources: [{ name: 'Ministry of Education Zambia', url: 'https://www.moge.gov.zm' }, { name: 'ECZ — Examinations Council', url: 'https://www.exams-council.org.zm' }, { name: 'HELSB Bursaries', url: 'https://www.helsb.org.zm' }] },
+  { match: ['health','hospital','nhima','insurance','clinic','doctor','malaria','hiv','aids','medicine','uth','nurse'],
+    answer: `<strong>Zambia's Healthcare System</strong>\n\n<strong>Structure</strong> — Ministry of Health tiered system:\nCommunity Health Posts → Health Centres → District Hospitals → University Teaching Hospitals\n\n<strong>NHIMA</strong> — Employers and employees each contribute <strong>1%</strong> of gross salary. Enrol at nhima.co.zm.\n\n<strong>Major Hospitals</strong>\n• <strong>UTH</strong> — University Teaching Hospital, Lusaka\n• <strong>Ndola Teaching Hospital</strong> — Copperbelt\n\n<strong>Key Statistics</strong>\n• <strong>HIV/AIDS:</strong> Prevalence ~11.1%. Free ARV treatment at all government facilities.\n• <strong>Maternal Health:</strong> Free delivery services at government facilities.\n\n<strong>Emergency:</strong> Call <strong>993</strong>`,
+    sources: [{ name: 'Ministry of Health Zambia', url: 'https://www.moh.gov.zm' }, { name: 'NHIMA', url: 'https://www.nhima.co.zm' }, { name: 'WHO Zambia', url: 'https://www.afro.who.int/countries/zambia' }] }
+];
+
+let activeChatId = null, isStreaming = false, chatCounter = 0;
+const historyStore = {
+  today: [],
+  yesterday: [
+    { id: 'h1', title: 'Income tax rates 2024' },
+    { id: 'h2', title: 'Victoria Falls visit tips' },
+    { id: 'h3', title: 'UNZA admission requirements' },
+    { id: 'h4', title: 'How to get a TPIN number' }
+  ]
+};
+
+const AI_AV = `<div class="av" aria-hidden="true">AZ</div>`;
+
+function welcomeHTML() {
+  return `<div class="welcome" id="welcome">
+    <svg class="welcome-emblem" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AskZambia emblem" role="img">
+      <rect width="76" height="76" rx="20" fill="#198754"/>
+      <rect width="76" height="76" rx="20" fill="url(#wg2)" fill-opacity="0.3"/>
+      <circle cx="38" cy="31" r="12" stroke="white" stroke-width="2.5"/>
+      <path d="m50 43-4.24-4.24" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M26 52h24" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <defs><linearGradient id="wg2" x1="0" y1="0" x2="76" y2="76" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs>
+    </svg>
+    <h1 class="welcome-title">Ask anything about Zambia</h1>
+    <p class="welcome-sub">Get instant, cited answers sourced from verified Zambian legislation, government data, and official records.</p>
+    <div class="chips" role="list">
+      <button class="chip" role="listitem" onclick="askChip(this)">How do I register a business?</button>
+      <button class="chip" role="listitem" onclick="askChip(this)">What are my constitutional rights?</button>
+      <button class="chip" role="listitem" onclick="askChip(this)">How do I get a Zambian passport?</button>
+      <button class="chip" role="listitem" onclick="askChip(this)">What is Zambia's current GDP?</button>
+      <button class="chip" role="listitem" onclick="askChip(this)">Tell me about Victoria Falls</button>
+      <button class="chip" role="listitem" onclick="askChip(this)">How does the education system work?</button>
+    </div>
+  </div>`;
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  el.innerHTML = '';
+  const chatIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+  const groups = [];
+  if (historyStore.today.length)     groups.push({ label: 'Today',     items: historyStore.today });
+  if (historyStore.yesterday.length) groups.push({ label: 'Yesterday', items: historyStore.yesterday });
+  groups.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'h-group'; div.setAttribute('role', 'group'); div.setAttribute('aria-label', g.label);
+    div.innerHTML = `<div class="h-label" aria-hidden="true">${g.label}</div>`;
+    g.items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'h-item' + (item.id === activeChatId ? ' active' : '');
+      row.setAttribute('role', 'listitem'); row.setAttribute('tabindex', '0'); row.setAttribute('aria-label', item.title);
+      row.innerHTML = chatIcon + `<span>${item.title}</span>`;
+      row.onclick = () => { activeChatId = item.id; renderHistory(); closeSidebar(); };
+      row.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); } };
+      div.appendChild(row);
+    });
+    el.appendChild(div);
+  });
+}
+
+function newChat() {
+  activeChatId = null;
+  document.getElementById('chatTitle').textContent = 'New Conversation';
+  document.getElementById('msgs').innerHTML = welcomeHTML();
+  renderHistory(); closeSidebar();
+  document.getElementById('input').focus();
+}
+function askChip(btn) { document.getElementById('input').value = btn.textContent; sendMessage(); }
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; }
+
+function findResponse(query) {
+  const q = query.toLowerCase();
+  for (const entry of KB) { if (entry.match.some(kw => q.includes(kw))) return entry; }
+  return {
+    answer: `Thank you for your question. AskZambia's knowledge base is continuously growing. For this query, the best starting point is the <strong>Smart Zambia eServices portal</strong> or the relevant government ministry's official website.\n\nCurrently indexed topics: business registration, taxation, constitutional rights, passports, tourism, economic data, education, and healthcare.`,
+    sources: [{ name: 'Smart Zambia eServices', url: 'https://eservices.gov.zm' }, { name: 'Zambia Government Portal', url: 'https://www.zambiagovernment.gov.zm' }]
+  };
+}
+
+function hideWelcome() { const w = document.getElementById('welcome'); if (w) w.remove(); }
+function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function scrollBottom() { const w = document.getElementById('msgsWrap'); w.scrollTop = w.scrollHeight; }
+
+function addUserMsg(text) {
+  hideWelcome();
+  const msgs = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.className = 'msg user'; d.setAttribute('role', 'article'); d.setAttribute('aria-label', 'Your message');
+  d.innerHTML = `<div class="av" aria-hidden="true">YK</div><div class="msg-body"><div class="bubble">${escHtml(text)}</div></div>`;
+  msgs.appendChild(d); scrollBottom();
+}
+
+function addTyping() {
+  const msgs = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.id = 'typing-row'; d.className = 'msg ai'; d.setAttribute('aria-label', 'AskZambia is thinking');
+  d.innerHTML = `${AI_AV}<div class="msg-body"><div class="typing" aria-hidden="true"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d); scrollBottom();
+}
+
+async function streamAnswer(entry) {
+  const typingRow = document.getElementById('typing-row');
+  const msgRow = document.createElement('div');
+  msgRow.className = 'msg ai'; msgRow.setAttribute('role', 'article'); msgRow.setAttribute('aria-label', 'AskZambia response');
+  msgRow.innerHTML = `${AI_AV}<div class="msg-body"><div class="bubble" id="streamBubble"></div></div>`;
+  typingRow.replaceWith(msgRow);
+  const bubble = document.getElementById('streamBubble');
+  const plain = entry.answer.replace(/<[^>]+>/g, '').replace(/\n/g, ' ');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    bubble.innerHTML = entry.answer.replace(/\n/g, '<br>');
+  } else {
+    const speed = Math.max(6, Math.min(18, Math.round(2600 / plain.length)));
+    const step = Math.max(1, Math.ceil(plain.length / 500));
+    let i = 0;
+    await new Promise(resolve => {
+      function tick() {
+        i = Math.min(i + step, plain.length);
+        bubble.innerHTML = plain.substring(0, i) + (i < plain.length ? '<span class="cursor" aria-hidden="true"></span>' : '');
+        scrollBottom();
+        if (i < plain.length) setTimeout(tick, speed); else resolve();
+      }
+      tick();
+    });
+    bubble.innerHTML = entry.answer.replace(/\n/g, '<br>');
+  }
+  if (entry.sources?.length) {
+    const srcDiv = document.createElement('div');
+    srcDiv.className = 'sources'; srcDiv.setAttribute('aria-label', 'Sources');
+    srcDiv.innerHTML = `<div class="sources-label" aria-hidden="true">Sources</div>` +
+      entry.sources.map(s => `<a class="src-chip" href="${s.url}" target="_blank" rel="noopener" aria-label="Source: ${s.name}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${s.name}</a>`).join('');
+    msgRow.querySelector('.msg-body').appendChild(srcDiv);
+  }
+  scrollBottom();
+}
+
+async function sendMessage() {
+  if (isStreaming) return;
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text) return;
+  isStreaming = true;
+  document.getElementById('sendBtn').disabled = true;
+  if (!activeChatId) {
+    chatCounter++;
+    activeChatId = `curr-${chatCounter}`;
+    const title = text.length > 38 ? text.slice(0, 38) + '…' : text;
+    document.getElementById('chatTitle').textContent = title;
+    historyStore.today.unshift({ id: activeChatId, title });
+    renderHistory();
+  }
+  input.value = ''; input.style.height = 'auto';
+  addUserMsg(text); addTyping();
+  await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
+  await streamAnswer(findResponse(text));
+  isStreaming = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar'), ov = document.getElementById('overlay');
+  const isOpen = sb.classList.contains('open');
+  sb.classList.toggle('open'); ov.classList.toggle('show');
+  document.querySelector('.menu-btn').setAttribute('aria-expanded', String(!isOpen));
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+  const btn = document.querySelector('.menu-btn');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+
+renderHistory();
+document.getElementById('input').focus();
+
+(function() {
+  const q = new URLSearchParams(window.location.search).get('q');
+  if (q) { document.getElementById('input').value = q; setTimeout(sendMessage, 400); }
+})();
+</script>
+</body>
+</html>
