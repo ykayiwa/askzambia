@@ -1,16 +1,12 @@
 import Link from "next/link";
+import { ZambiaFlag } from "./ZambiaFlag";
 
 export function Footer() {
   return (
     <footer className="bg-[#16213e] px-6 py-12 text-white/55">
       <div className="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-5">
         <div className="flex items-center gap-2.5 text-[1.05rem] font-bold text-white">
-          <span className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#198754]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </span>
+          <ZambiaFlag size={30} />
           AskZambia
         </div>
         <nav className="flex flex-wrap gap-7">

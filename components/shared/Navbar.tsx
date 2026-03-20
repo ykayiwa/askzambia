@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ZambiaFlag } from "./ZambiaFlag";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -10,12 +11,7 @@ export function Navbar() {
     <>
       <nav className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-black/[0.06] bg-white/[0.94] px-6 backdrop-blur-[16px] sm:px-8">
         <Link href="/" className="flex items-center gap-2.5 text-[1.2rem] font-extrabold tracking-[-0.3px] text-[#198754]">
-          <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-[#198754]">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </span>
+          <ZambiaFlag size={34} />
           AskZambia
         </Link>
 
