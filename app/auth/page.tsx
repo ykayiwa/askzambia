@@ -8,6 +8,7 @@ import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
 
 export default function AuthPage() {
   const router = useRouter();
+  const isOffice = typeof window !== "undefined" && window.location.hostname.startsWith("office.");
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,37 +71,39 @@ export default function AuthPage() {
 
         {/* Form card */}
         <div className="rounded-2xl border border-[#e0e8e0] bg-white p-8 shadow-sm">
-          {/* Toggle */}
-          <div className="mb-6 flex rounded-lg bg-[#f5f7f5] p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(true);
-                setError("");
-              }}
-              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-all ${
-                isLogin
-                  ? "bg-white text-[#198754] shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(false);
-                setError("");
-              }}
-              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-all ${
-                !isLogin
-                  ? "bg-white text-[#198754] shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Sign Up
-            </button>
-          </div>
+          {/* Toggle — hidden on admin/office domain */}
+          {!isOffice && (
+            <div className="mb-6 flex rounded-lg bg-[#f5f7f5] p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(true);
+                  setError("");
+                }}
+                className={`flex-1 rounded-md py-2 text-sm font-semibold transition-all ${
+                  isLogin
+                    ? "bg-white text-[#198754] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogin(false);
+                  setError("");
+                }}
+                className={`flex-1 rounded-md py-2 text-sm font-semibold transition-all ${
+                  !isLogin
+                    ? "bg-white text-[#198754] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
