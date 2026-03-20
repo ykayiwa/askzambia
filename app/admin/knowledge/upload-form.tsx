@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+interface CategoryOption {
+  name: string;
+  label: string;
+}
 
 export default function KnowledgeUploadForm() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCategories(data);
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -61,13 +76,11 @@ export default function KnowledgeUploadForm() {
             className="rounded-md border border-gray-200 px-3 py-1.5 text-xs focus:border-[#198754] focus:outline-none focus:ring-1 focus:ring-[#198754]"
           >
             <option value="">Category...</option>
-            <option value="law">Law</option>
-            <option value="government">Government</option>
-            <option value="tourism">Tourism</option>
-            <option value="economy">Economy</option>
-            <option value="culture">Culture</option>
-            <option value="health">Health</option>
-            <option value="education">Education</option>
+            {categories.map((cat) => (
+              <option key={cat.name} value={cat.name}>
+                {cat.label}
+              </option>
+            ))}
           </select>
         </div>
         <button

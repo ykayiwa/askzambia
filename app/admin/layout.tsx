@@ -37,6 +37,20 @@ const navItems = [
     ),
   },
   {
+    label: "Categories",
+    href: "/admin/categories",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M3 5h14" />
+        <path d="M3 10h14" />
+        <path d="M3 15h14" />
+        <circle cx="17" cy="5" r="1" fill="currentColor" />
+        <circle cx="17" cy="10" r="1" fill="currentColor" />
+        <circle cx="17" cy="15" r="1" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
     label: "Knowledge Base",
     href: "/admin/knowledge",
     icon: (

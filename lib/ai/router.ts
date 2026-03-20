@@ -1,15 +1,16 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { llm } from "@/lib/ai/provider";
+import { isHighStakes } from "@/lib/rag/pipeline";
 
-const deepseek = createOpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY!,
-  baseURL: "https://api.deepseek.com",
-});
-
-const HIGH_STAKES_CATEGORIES = ["law", "government", "health"];
-
-export function selectModel(category?: string) {
-  if (HIGH_STAKES_CATEGORIES.includes(category ?? "")) {
-    return deepseek("deepseek-chat");
+export async function selectModel(category?: string) {
+  // For now, use the same model for all categories
+  // When ready to upgrade, check high_stakes from DB and route to a stronger model
+  if (category) {
+    const highStakes = await isHighStakes(category);
+    if (highStakes) {
+      // In the future, route to a stronger model here
+      // e.g. return openrouter("anthropic/claude-sonnet-4-5")
+      return llm;
+    }
   }
-  return deepseek(process.env.LLM_MODEL ?? "deepseek-chat");
+  return llm;
 }

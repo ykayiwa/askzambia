@@ -1,8 +1,7 @@
 import { streamText } from "ai";
 import { llm } from "@/lib/ai/provider";
-import { runRAGPipeline, detectCategory } from "@/lib/rag/pipeline";
+import { runRAGPipeline, detectCategory, getCategoryPrompt } from "@/lib/rag/pipeline";
 import { ASKZAMBIA_SYSTEM_PROMPT } from "@/lib/prompts/system";
-import { TOPIC_PROMPTS } from "@/lib/prompts/templates";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import {
@@ -36,12 +35,15 @@ export async function POST(req: Request) {
     const { messages, sessionId } = RequestSchema.parse(body);
     const lastMessage = messages[messages.length - 1].content;
 
-    const category = detectCategory(lastMessage);
+    const category = await detectCategory(lastMessage);
     const { context, sources } = await runRAGPipeline(lastMessage, category);
 
     let systemPrompt = ASKZAMBIA_SYSTEM_PROMPT.replace("{context}", context);
-    if (category && TOPIC_PROMPTS[category]) {
-      systemPrompt += `\n\nADDITIONAL GUIDANCE: ${TOPIC_PROMPTS[category]}`;
+    if (category) {
+      const categoryPrompt = await getCategoryPrompt(category);
+      if (categoryPrompt) {
+        systemPrompt += `\n\nADDITIONAL GUIDANCE: ${categoryPrompt}`;
+      }
     }
 
     // Create or reuse session (only for authenticated users)

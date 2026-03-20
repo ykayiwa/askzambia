@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { retrieveChunks } from "@/lib/rag/retriever";
 import { rerankChunks } from "@/lib/rag/reranker";
+import { getDb } from "@/lib/db/client";
 import type { RetrievedChunk } from "@/types/sources";
 
 let _openai: OpenAI | null = null;
@@ -41,24 +42,57 @@ export async function runRAGPipeline(
   return { context, sources: rankedChunks };
 }
 
-export function detectCategory(query: string): string | undefined {
+// Cache categories for 5 minutes to avoid hitting DB on every query
+interface CachedCategories {
+  data: Array<{ name: string; keywords: string[]; prompt: string | null; high_stakes: boolean }>;
+  fetchedAt: number;
+}
+
+let _categoryCache: CachedCategories | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function getCategoriesFromDB() {
+  const now = Date.now();
+  if (_categoryCache && now - _categoryCache.fetchedAt < CACHE_TTL) {
+    return _categoryCache.data;
+  }
+
+  try {
+    const sql = getDb();
+    const rows = await sql`
+      SELECT name, keywords, prompt, high_stakes
+      FROM categories
+      ORDER BY sort_order, name
+    `;
+    _categoryCache = { data: rows as unknown as CachedCategories["data"], fetchedAt: now };
+    return _categoryCache.data;
+  } catch {
+    // Fallback: return cached data if available, empty array otherwise
+    return _categoryCache?.data ?? [];
+  }
+}
+
+export async function detectCategory(query: string): Promise<string | undefined> {
   const lower = query.toLowerCase();
+  const categories = await getCategoriesFromDB();
 
-  const categoryKeywords: Record<string, string[]> = {
-    law: ["law", "constitution", "act", "legal", "rights", "court", "legislation", "bill"],
-    government: ["register", "business", "tax", "passport", "visa", "permit", "immigration", "pacra", "zra"],
-    tourism: ["visit", "park", "tourism", "hotel", "safari", "victoria falls", "travel"],
-    economy: ["gdp", "inflation", "economy", "trade", "export", "import", "kwacha", "bank"],
-    health: ["health", "hospital", "clinic", "disease", "medical", "doctor", "hiv", "malaria"],
-    education: ["school", "university", "education", "exam", "grade", "student", "teacher"],
-    culture: ["culture", "tradition", "ethnic", "tribe", "language", "music", "dance", "ceremony"],
-  };
-
-  for (const [category, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some((kw) => lower.includes(kw))) {
-      return category;
+  for (const cat of categories) {
+    if (cat.keywords.some((kw) => lower.includes(kw))) {
+      return cat.name;
     }
   }
 
   return undefined;
+}
+
+export async function getCategoryPrompt(category: string): Promise<string | null> {
+  const categories = await getCategoriesFromDB();
+  const found = categories.find((c) => c.name === category);
+  return found?.prompt ?? null;
+}
+
+export async function isHighStakes(category: string): Promise<boolean> {
+  const categories = await getCategoriesFromDB();
+  const found = categories.find((c) => c.name === category);
+  return found?.high_stakes ?? false;
 }
