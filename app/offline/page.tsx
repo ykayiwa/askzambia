@@ -1,3 +1,5 @@
+"use client";
+
 import { ZambiaFlag } from "@/components/shared/ZambiaFlag";
 
 export default function OfflinePage() {
