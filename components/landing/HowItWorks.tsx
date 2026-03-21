@@ -18,7 +18,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="border-y border-[#e2e8f0] bg-[#f8fafc] px-6 py-24">
+    <section id="how" className="border-y border-[#e2e8f0] bg-[#f8fafc] px-6 py-24 scroll-mt-20">
       <div className="mx-auto max-w-[920px]">
         <div className="mb-12 text-center">
           <span className="mb-3 inline-block rounded-full bg-[#f0faf4] px-3 py-1 text-[0.74rem] font-bold uppercase tracking-[0.12em] text-[#198754]">

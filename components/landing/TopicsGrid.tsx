@@ -147,7 +147,7 @@ export function TopicsGrid() {
   const router = useRouter();
 
   return (
-    <section className="mx-auto max-w-[1120px] px-6 py-24">
+    <section id="topics" className="mx-auto max-w-[1120px] px-6 py-24 scroll-mt-20">
       <div className="mb-12 text-center">
         <span className="mb-3 inline-block rounded-full bg-[#f0faf4] px-3 py-1 text-[0.74rem] font-bold uppercase tracking-[0.12em] text-[#198754]">
           Explore by topic
