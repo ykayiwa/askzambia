@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
+
+  // Redirect www to non-www
+  if (hostname.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.host = hostname.replace("www.", "");
+    return NextResponse.redirect(url, 301);
+  }
+
   const isAdminDomain =
     hostname.startsWith("office.askzambia.com") ||
     hostname.startsWith("office.");
