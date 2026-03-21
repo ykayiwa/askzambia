@@ -37,10 +37,10 @@ export function Navbar() {
             </Link>
           ) : (
             <Link
-              href="/auth"
+              href="/chat"
               className="inline-flex min-h-[44px] items-center rounded-[9px] bg-[#198754] px-[22px] py-[10px] text-[0.9rem] font-semibold text-white transition-all hover:-translate-y-px hover:bg-[#146c43]"
             >
-              Sign In
+              Open Chat
             </Link>
           )}
         </div>
@@ -83,8 +83,8 @@ export function Navbar() {
               Open Chat →
             </Link>
           ) : (
-            <Link href="/auth" onClick={() => setMobileOpen(false)} className="mt-2 flex min-h-[44px] items-center justify-center rounded-lg bg-[#198754] text-base font-semibold text-white transition-colors hover:bg-[#146c43]">
-              Sign In
+            <Link href="/chat" onClick={() => setMobileOpen(false)} className="mt-2 flex min-h-[44px] items-center justify-center rounded-lg bg-[#198754] text-base font-semibold text-white transition-colors hover:bg-[#146c43]">
+              Open Chat
             </Link>
           )}
         </div>
