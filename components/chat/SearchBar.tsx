@@ -43,33 +43,42 @@ export function SearchBar({ onSubmit, isLoading, autoFocus }: SearchBarProps) {
   };
 
   return (
-    <div className="border-t border-[#e0e8e0] bg-white px-4 py-3">
-      <div className="mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-[#e0e8e0] bg-[#f8f9fa] px-4 py-2.5 focus-within:border-[#198754]/40 focus-within:ring-2 focus-within:ring-[#198754]/10">
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onInput={handleInput}
-          placeholder="Ask anything about Zambia..."
-          rows={1}
-          className="max-h-[150px] min-h-[24px] flex-1 resize-none bg-transparent text-sm text-[#0f1f14] placeholder-gray-400 outline-none"
-          disabled={isLoading}
-        />
-        <button
-          onClick={handleSubmit}
-          disabled={!input.trim() || isLoading}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#198754] text-white transition-all hover:bg-[#146c43] disabled:opacity-40 disabled:hover:bg-[#198754]"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </button>
+    <div className="border-t border-[#e8ecf0] bg-gradient-to-t from-white via-white to-white/80 px-4 pb-4 pt-3">
+      <div className="mx-auto max-w-3xl">
+        <div className="flex items-end gap-2 rounded-2xl border border-[#e2e8f0] bg-white px-4 py-2.5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all duration-200 focus-within:border-[#198754]/40 focus-within:shadow-[0_0_0_3px_rgba(25,135,84,0.06),0_2px_12px_rgba(0,0,0,0.04)]">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onInput={handleInput}
+            placeholder="Ask anything about Zambia..."
+            rows={1}
+            className="max-h-[150px] min-h-[28px] flex-1 resize-none bg-transparent text-[0.9rem] leading-relaxed text-[#0f1f14] placeholder-[#a0aec0] outline-none"
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={!input.trim() || isLoading}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#198754] text-white transition-all duration-200 hover:bg-[#146c43] active:scale-95 disabled:bg-[#e2e8f0] disabled:text-[#a0aec0]"
+          >
+            {isLoading ? (
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            )}
+          </button>
+        </div>
+        <p className="mt-2 text-center text-[11px] text-[#94a3b8]">
+          AskZambia provides information from verified sources. Always verify critical details.
+        </p>
       </div>
-      <p className="mt-1.5 text-center text-[10px] text-gray-400">
-        AskZambia provides information from verified sources. Always verify critical details.
-      </p>
     </div>
   );
 }

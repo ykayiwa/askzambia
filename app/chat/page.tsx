@@ -211,38 +211,40 @@ function ChatContent() {
 
   if (!authChecked) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#198754] border-t-transparent" />
+      <div className="flex h-screen items-center justify-center bg-[#fafbfc]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-[2.5px] border-[#198754]/20 border-t-[#198754]" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-dvh overflow-hidden bg-[#fafbfc]">
       {/* Sidebar overlay for mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-[264px] flex-shrink-0 border-r border-[#e0e8e0] bg-[#f5f7f5] transition-transform lg:relative lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 z-50 w-[272px] flex-shrink-0 border-r border-[#e8ecf0] bg-white transition-transform duration-300 ease-out lg:relative lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Sidebar header */}
-          <div className="border-b border-[#e0e8e0] p-4">
-            <Link href="/" className="mb-3 flex items-center gap-2.5">
-              <ZambiaFlag size={32} />
+          <div className="p-4 pb-3">
+            <Link href="/" className="mb-4 flex items-center gap-2.5">
+              <ZambiaFlag size={30} />
               <div className="leading-tight">
-                <span className="block text-base font-bold tracking-tight text-[#198754]">
+                <span className="block text-[0.95rem] font-bold tracking-tight text-[#198754]">
                   AskZambia
                 </span>
-                <span className="block text-[9.5px] font-semibold uppercase tracking-wider text-gray-500">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.08em] text-[#94a3b8]">
                   National AI Platform
                 </span>
               </div>
@@ -253,15 +255,15 @@ function ChatContent() {
                 setCurrentSessionId(null);
                 setSidebarOpen(false);
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#198754] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#146c43]"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#198754] px-4 py-2.5 text-[0.85rem] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#146c43] hover:shadow active:scale-[0.98]"
             >
               <svg
-                width="16"
-                height="16"
+                width="15"
+                height="15"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -272,14 +274,17 @@ function ChatContent() {
             </button>
           </div>
 
+          {/* Divider */}
+          <div className="mx-4 h-px bg-[#f0f2f5]" />
+
           {/* Session history */}
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex-1 overflow-y-auto px-2 py-2">
             {isLoggedIn ? (
               Object.entries(grouped).map(
                 ([label, items]) =>
                   items.length > 0 && (
-                    <div key={label} className="mb-4">
-                      <p className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                    <div key={label} className="mb-3">
+                      <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-[#94a3b8]">
                         {label}
                       </p>
                       {items.map((s) => (
@@ -289,10 +294,10 @@ function ChatContent() {
                             loadSessionMessages(s.id);
                             setSidebarOpen(false);
                           }}
-                          className={`flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-colors hover:bg-[#198754]/10 ${
+                          className={`group flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[0.83rem] transition-all duration-150 ${
                             currentSessionId === s.id
-                              ? "bg-[#198754]/10 text-[#198754]"
-                              : "text-[#0f1f14]"
+                              ? "bg-[#198754]/8 font-medium text-[#198754]"
+                              : "text-[#475569] hover:bg-[#f5f7fa] hover:text-[#0f1f14]"
                           }`}
                         >
                           <svg
@@ -301,10 +306,14 @@ function ChatContent() {
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            strokeWidth="2"
+                            strokeWidth="1.8"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="shrink-0 text-gray-400"
+                            className={`shrink-0 ${
+                              currentSessionId === s.id
+                                ? "text-[#198754]"
+                                : "text-[#cbd5e1] group-hover:text-[#94a3b8]"
+                            }`}
                           >
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                           </svg>
@@ -317,13 +326,18 @@ function ChatContent() {
                   )
               )
             ) : (
-              <div className="px-3 py-4 text-center">
-                <p className="text-sm text-gray-500">
-                  Sign in to save your chat history
+              <div className="flex flex-col items-center px-3 py-8 text-center">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#f0faf4]">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <p className="text-[0.8rem] leading-relaxed text-[#64748b]">
+                  Sign in to save your<br />chat history
                 </p>
                 <Link
                   href="/auth"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#198754]/10 px-4 py-2 text-sm font-semibold text-[#198754] transition-colors hover:bg-[#198754]/20"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#198754]/8 px-4 py-2 text-[0.8rem] font-semibold text-[#198754] transition-colors hover:bg-[#198754]/15"
                 >
                   Sign In
                 </Link>
@@ -332,21 +346,21 @@ function ChatContent() {
           </div>
 
           {/* Sidebar footer */}
-          <div className="border-t border-[#e0e8e0] p-3">
+          <div className="border-t border-[#f0f2f5] p-3">
             {isLoggedIn ? (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 truncate">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#198754] text-xs font-bold text-white">
+              <div className="flex items-center justify-between rounded-lg px-1">
+                <div className="flex items-center gap-2.5 truncate">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#198754] to-[#146c43] text-xs font-bold text-white shadow-sm">
                     {userName ? userName[0].toUpperCase() : "U"}
                   </div>
-                  <span className="truncate text-sm font-medium text-[#0f1f14]">
+                  <span className="truncate text-[0.85rem] font-medium text-[#1e293b]">
                     {userName || "User"}
                   </span>
                 </div>
                 <button
                   onClick={handleSignOut}
                   title="Sign out"
-                  className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                  className="rounded-lg p-2 text-[#94a3b8] transition-colors hover:bg-red-50 hover:text-red-500"
                 >
                   <svg
                     width="16"
@@ -354,7 +368,7 @@ function ChatContent() {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="1.8"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
@@ -367,15 +381,15 @@ function ChatContent() {
             ) : (
               <Link
                 href="/auth"
-                className="flex items-center justify-center gap-2 rounded-lg border border-[#e0e8e0] px-4 py-2 text-sm font-medium text-[#0f1f14] transition-colors hover:bg-[#f5f7f5]"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#e8ecf0] px-4 py-2.5 text-[0.83rem] font-medium text-[#475569] transition-all hover:border-[#198754]/20 hover:bg-[#f0faf4] hover:text-[#198754]"
               >
                 <svg
-                  width="16"
-                  height="16"
+                  width="15"
+                  height="15"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
@@ -393,15 +407,15 @@ function ChatContent() {
       {/* Main area */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-[#e0e8e0] bg-white px-4">
+        <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-[#e8ecf0] bg-white/80 px-4 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-[#f0faf4] lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-[#64748b] transition-colors hover:bg-[#f5f7fa] hover:text-[#0f1f14] lg:hidden"
             >
               <svg
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -414,7 +428,7 @@ function ChatContent() {
                 <path d="M3 18h18" />
               </svg>
             </button>
-            <span className="text-sm font-semibold text-[#0f1f14]">
+            <span className="text-[0.85rem] font-medium text-[#475569]">
               {messages.length > 0
                 ? messages[0].content.slice(0, 50) +
                   (messages[0].content.length > 50 ? "..." : "")
@@ -424,11 +438,11 @@ function ChatContent() {
           {!isLoggedIn && (
             <Link
               href="/auth"
-              className="flex items-center gap-1.5 rounded-lg bg-[#198754] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#146c43]"
+              className="flex items-center gap-1.5 rounded-lg bg-[#198754] px-4 py-2 text-[0.8rem] font-semibold text-white shadow-sm transition-all hover:bg-[#146c43] active:scale-[0.97]"
             >
               <svg
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

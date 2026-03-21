@@ -28,7 +28,7 @@ export function ChatWindow({ messages, isLoading, onSend }: ChatWindowProps) {
         {messages.length === 0 ? (
           <SuggestedQuestions onSelect={onSend} />
         ) : (
-          <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
+          <div className="mx-auto max-w-3xl space-y-5 px-4 py-6">
             {messages.map((msg) => (
               <MessageBubble
                 key={msg.id}
@@ -39,12 +39,16 @@ export function ChatWindow({ messages, isLoading, onSend }: ChatWindowProps) {
             ))}
             {isLoading && (
               <div className="flex gap-3">
-                <ZambiaFlag size={32} />
-                <div className="rounded-2xl rounded-tl-md border border-[#e0e8e0] bg-[#f8fdf8] px-4 py-3">
-                  <div className="flex gap-1">
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[#198754]/40 [animation-delay:0ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[#198754]/40 [animation-delay:150ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-[#198754]/40 [animation-delay:300ms]" />
+                <div className="mt-1 shrink-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#f0faf4] to-[#e0f2e9] shadow-sm">
+                    <ZambiaFlag size={22} />
+                  </div>
+                </div>
+                <div className="rounded-2xl rounded-tl-sm border border-[#e8ecf0] bg-white px-5 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-[6px] w-[6px] animate-bounce rounded-full bg-[#198754]/30 [animation-delay:0ms]" />
+                    <span className="h-[6px] w-[6px] animate-bounce rounded-full bg-[#198754]/30 [animation-delay:150ms]" />
+                    <span className="h-[6px] w-[6px] animate-bounce rounded-full bg-[#198754]/30 [animation-delay:300ms]" />
                   </div>
                 </div>
               </div>
